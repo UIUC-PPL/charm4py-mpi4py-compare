@@ -74,6 +74,8 @@ def main():
     me = comm.Get_rank() #My ID
     np = comm.Get_size() #Number of processor, NOT numpy
     x, y = factor(np)
+    if me == 0:
+        print(f"X, y: {x} {y}")
     comm = comm.Create_cart([x,y])
     coords = comm.Get_coords(me)
     X = coords[0]
@@ -226,6 +228,7 @@ def main():
         if i<1:
             comm.Barrier()
             t0 = MPI.Wtime()
+            tst = MPI.Wtime()
 
         if Y < y-1 :
             #req0 = comm.Irecv([top_buf_in, r*width, typ], source =top_nbr , tag =101 )
@@ -327,6 +330,10 @@ def main():
                 B[a][b] = B[a][b] + numpy.dot(W[:,r],A[a+r,b:b+2*r+1])
 
         numpy.add(A[0:jend-r+1,0:iend-r+1],1)
+
+    if me == 0:
+        tend = MPI.Wtime()
+        print(f"Elapsed: {tend-tst}")
 
     local_time = numpy.array(MPI.Wtime() - t0 , dtype ='f')
     total_time = numpy.array(0 , dtype ='f')
