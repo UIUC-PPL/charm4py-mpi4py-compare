@@ -158,11 +158,12 @@ def main(args):
     charm.thisProxy.updateGlobals(params, awaitable=True).get()
     cells = Array(Cell, (x, y))
 
-    print('Number of chares     = ', np)
-    print('Number of processors = ', charm.numPes())
-    print('Grid shape (x,y)     = ', x, y)
-    print('Problem Domain (x,y) = ', n, m)
-    print('Number of iterations = ', iterations)
+    print('Number of chares            = ', np)
+    print('Number of processors        = ', charm.numPes())
+    print('Grid shape (x,y)            = ', x, y)
+    print('Problem Domain (x,y)        = ', n, m)
+    print('Number of iterations        = ', iterations)
+    print('Number of warmup iterations = ', warmup)
 
     done_fut = Future()
     tstart = time.perf_counter()
