@@ -24,12 +24,12 @@ class Directions(Enum):
 class Cell(Chare):
     def __init__(self):
         self.X, self.Y = self.thisIndex
-        my_blocksize = (n//x)*(n//y)
-        ghost_size = ((n//x) * 2) + ((n//y) * 2)
-        kernels.set_block_params(n//x, n//y)
+        my_blocksize = (n//x)*(m//y)
+        ghost_size = ((n//x) * 2) + ((m//y) * 2)
+        kernels.set_block_params(m//y, n//x)
 
-        self.width = n//x
-        self.height = n//y
+        self.width = m//y
+        self.height = n//x
 
         self.T = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
         self.newT = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
@@ -121,41 +121,48 @@ def main(args):
 
     print('Python Charm/Numpy  Stencil execution on 2D grid')
 
-    if len(sys.argv) < 3 or len(sys.argv) > 5:
+    if len(sys.argv) < 3:
         print('argument count = ', len(sys.argv))
-        charm.exit("Usage: ./stencil <# chares> <# iterations> <array dimension>")
+        charm.abort("Usage: ./stencil <# chares> <# iterations> [<array dimension> or <array dimension X> <array dimension Y>]")
 
     np = int(sys.argv[1])
     if np < 1:
-        charm.exit("ERROR: num_chares must be >= 1")
+        charm.abort("ERROR: num_chares must be >= 1")
     iterations = int(sys.argv[2])
     if iterations < 1:
-        charm.exit("ERROR: iterations must be >= 1")
+        charm.abort("ERROR: iterations must be >= 1")
 
     n = int(sys.argv[3])
-    nsquare = n * n
-    if nsquare < np:
-        charm.abort(f"ERROR: grid size {nsquare}, must be at least # ranks: {np}")
-    if n % np:
-        charm.abort(f"ERROR: grid size {n} does not evenly divide the number of chares {np}")
+    if len(sys.argv) > 4:
+        m = int(sys.argv[4])
+    else:
+        m = n
 
+    nsquare = n * m
     x, y = factor(np)
     x, y = int(x), int(y)
 
+    if nsquare < np:
+        charm.abort(f"ERROR: grid size {nsquare}, must be at least # ranks: {np}")
+    if n % x:
+        charm.abort(f"ERROR: grid size {n} does not evenly divide the number of chares in the x dimension {x}")
+    if m % y:
+        charm.abort(f"ERROR: grid size {m} does not evenly divide the number of chares in the y dimension {y}")
 
     params = {'x': x, 'y': y,
               'np': np, 'iterations': iterations,
-              'n': n,
+              'n': n, 'm': m,
               'warmup':10
             }
 
     charm.thisProxy.updateGlobals(params, awaitable=True).get()
     cells = Array(Cell, (x, y))
 
-    print('Number of chares          = ', np)
-    print('Number of processors      = ', charm.numPes())
-    print('Grid shape (x,y)          = ', x, y)
-    print('Number of iterations      = ', iterations)
+    print('Number of chares     = ', np)
+    print('Number of processors = ', charm.numPes())
+    print('Grid shape (x,y)     = ', x, y)
+    print('Problem Domain (x,y) = ', n, m)
+    print('Number of iterations = ', iterations)
 
     done_fut = Future()
     tstart = time.perf_counter()
