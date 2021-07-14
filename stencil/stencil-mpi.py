@@ -56,6 +56,13 @@ def main():
         sys.exit(f"ERROR: grid size {m} does not evenly divide the number of chares in the y dimension {y}")
 
     warmup=10
+    if me == 0:
+        print('Number of processors        = ', np)
+        print('Grid shape (x,y)            = ', x, y)
+        print('Problem Domain (x,y)        = ', n, m)
+        print('Number of warmup iterations = ', warmup)
+        print('Number of iterations        = ', iterations)
+
     my_blocksize = (n//x)*(m//y)
     ghost_size = ((n//x) * 2) + ((m//y) * 2)
     kernels.set_block_params(m//y, n//x)
