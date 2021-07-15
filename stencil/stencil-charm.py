@@ -33,6 +33,7 @@ class Cell(Chare):
 
         self.T = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
         self.newT = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
+        kernels.enforce_BC(self.T)
 
     @coro
     def run(self, done_future):
