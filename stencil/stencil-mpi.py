@@ -73,7 +73,7 @@ def main():
     T = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
     newT = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
 
-    kernels.enforce_BC(self.T)
+    kernels.enforce_BC(T)
 
     top_buf_out = numpy.zeros(width)
     top_buf_in = numpy.zeros(width)
