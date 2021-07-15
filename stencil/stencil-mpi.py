@@ -3,6 +3,9 @@ import sys
 from mpi4py import MPI
 import numpy
 import kernels
+import time
+
+COMM_TIME, COMP_TIME, ITER_TIME = range(3)
 
 def factor(r):
     fac1 = int(numpy.sqrt(r+1.0))
@@ -12,6 +15,24 @@ def factor(r):
             fac2 = r/fac1
             break;
     return fac1, fac2
+
+def output_timing(data, n, m, np, iterations, warmup, output_fp):
+    from datetime import datetime
+    now = datetime.now()
+    dt_string = now.strftime("%Y_%m_%d_%H_%M_%S")
+    output_filename = f"{output_fp}/{dt_string}_n{n}_m{n}_np{np}_i{iterations}_w{warmup}_mpi.csv"
+    header = "Process,Iteration,Iteration Time,Communication Time,Computation Time"
+    with open(output_filename, 'w') as output_file:
+        output_file.write(f'#{" ".join(sys.argv)}\n')
+        output_file.write(header + '\n')
+        for pnum, timing in enumerate(data):
+            for inum, iter in enumerate(timing):
+                in_seconds = iter/1e9
+                comm_time = in_seconds[COMM_TIME]
+                comp_time = in_seconds[COMP_TIME]
+                iter_time = in_seconds[ITER_TIME]
+                output_tuple = (pnum, inum+1, iter_time, comm_time, comp_time)
+                output_file.write(','.join(map(str, output_tuple)) + '\n')
 
 def main():
 
@@ -26,6 +47,7 @@ def main():
 
     x = int(x)
     y = int(y)
+    output_filepath = '.'
 
     if me == 0:
         print(f"X, y: {x} {y}")
@@ -95,12 +117,21 @@ def main():
     if X < x-1:
         right_nbr = comm.Get_cart_rank([X+1,Y])
 
+    # information for compute, comm., and total time for all iterations
+    # We consider communication time the time it takes to pack, send, and
+    # unpack ghosts.
+    # Computation is just time spent in the kernel and enforcing BC
+    timing_info = numpy.zeros((warmup + iterations, 3), dtype=numpy.float64)
+
     for i in range(warmup + iterations):
         if i<1:
             comm.Barrier()
             t0 = MPI.Wtime()
         if i == warmup:
             tst = MPI.Wtime()
+
+        iter_start = time.perf_counter_ns()
+        comm_start = iter_start
         if Y < y-1 :
             req0 = comm.Irecv(top_buf_in, source =top_nbr , tag =101 )
             kernels.pack_top(T, top_buf_out)
@@ -139,12 +170,27 @@ def main():
             req5.wait()
             kernels.unpack_right(T, right_buf_in)
 
+        comm_end = time.perf_counter_ns()
+        comp_start = comm_end
+
         kernels.compute(newT, T)
         newT, T = T, newT
         kernels.enforce_BC(T)
+
+        iter_end = time.perf_counter_ns()
+        comp_end = iter_end
+
+        timing_info[i][COMM_TIME] = comm_end - comm_start
+        timing_info[i][COMP_TIME] = comp_end - comp_start
+        timing_info[i][ITER_TIME] = iter_end - iter_start
     tend = MPI.Wtime()
     if me == 0:
         print(f"Elapsed: {tend-tst}")
+
+    comm = MPI.COMM_WORLD
+    data = comm.gather(timing_info, root=0)
+    if me == 0:
+        output_timing(data, n, m, np, iterations, warmup, output_filepath)
 
 
 if __name__ == '__main__':

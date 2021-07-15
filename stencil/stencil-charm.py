@@ -6,6 +6,8 @@ from enum import Enum
 import time
 import kernels
 
+COMM_TIME, COMP_TIME, ITER_TIME = range(3)
+
 def factor(r):
     fac1 = int(numpy.sqrt(r+1.0))
     fac2 = 0
@@ -38,6 +40,11 @@ class Cell(Chare):
     @coro
     def run(self, done_future):
         neighbors = list()
+        # information for compute, comm., and total time for all iterations
+        # We consider communication time the time it takes to pack, send, and
+        # unpack ghosts.
+        # Computation is just time spent in the kernel and enforcing BC
+        timing_info = numpy.zeros((warmup + iterations, 3), dtype=numpy.float64)
 
         if self.Y > 0:
             top_proxy = self.thisProxy[(self.X, self.Y-1)]
@@ -74,6 +81,8 @@ class Cell(Chare):
             if i == warmup:
                 t0 = time.perf_counter()
 
+            iter_start = time.perf_counter_ns()
+            comm_start = iter_start
             if self.Y > 0:
                 kernels.pack_top(self.T, top_buf_out)
                 top_nbr.send(top_buf_out)
@@ -103,17 +112,54 @@ class Cell(Chare):
 
                 elif ready_ch.dir == Directions.RIGHT:
                     kernels.unpack_right(self.T, input_data)
+
+            comm_end = time.perf_counter_ns()
+            comp_start = comm_end
+
             # Apply the stencil operator
             kernels.compute(self.newT, self.T)
             self.newT, self.T = self.T, self.newT
             kernels.enforce_BC(self.T)
+            iter_end = time.perf_counter_ns()
+            comp_end = iter_end
 
-        local_time = time.perf_counter() - t0
-        # assert numpy.allclose(self.newT, self.T)
-        if self.thisIndex == (0,0):
-            print(f"Elapsed: {local_time}")
+            timing_info[i][COMM_TIME] = comm_end - comm_start
+            timing_info[i][COMP_TIME] = comp_end - comp_start
+            timing_info[i][ITER_TIME] = iter_end - iter_start
 
-        self.reduce(done_future)
+        self.local_time = time.perf_counter() - t0
+        self.reduce(self.thisProxy[(0, 0)].gather_timing,
+                    timing_info,
+                    Reducer.gather
+                    )
+
+        if self.thisIndex == (0, 0):
+            self.done_future = done_future
+        else:
+            self.reduce(done_future)
+
+        if self.thisIndex == (0, 0):
+            print(f"Elapsed: {self.local_time}")
+
+
+    def gather_timing(self, gathered):
+        from datetime import datetime
+        now = datetime.now()
+        dt_string = now.strftime("%Y_%m_%d_%H_%M_%S")
+        output_filename = f"{output_filepath}/{dt_string}_n{n}_m{n}_np{np}_i{iterations}_w{warmup}_charm.csv"
+        header = "Process,Iteration,Iteration Time,Communication Time,Computation Time"
+        with open(output_filename, 'w') as output_file:
+            output_file.write(f'#{" ".join(sys.argv)}\n')
+            output_file.write(header + '\n')
+            for pnum, timing in enumerate(gathered):
+                for inum, iter in enumerate(timing):
+                    in_seconds = iter/1e9
+                    comm_time = in_seconds[COMM_TIME]
+                    comp_time = in_seconds[COMP_TIME]
+                    iter_time = in_seconds[ITER_TIME]
+                    output_tuple = (pnum, inum+1, iter_time, comm_time, comp_time)
+                    output_file.write(','.join(map(str, output_tuple)) + '\n')
+        self.reduce(self.done_future)
 
 def main(args):
     # ********************************************************************
@@ -124,7 +170,9 @@ def main(args):
 
     if len(sys.argv) < 3:
         print('argument count = ', len(sys.argv))
-        charm.abort("Usage: ./stencil <# chares> <# iterations> [<array dimension> or <array dimension X> <array dimension Y>]")
+        charm.abort("Usage: ./stencil <# chares> <# iterations> "
+                    "[<array dimension> or <array dimension X> <array dimension Y>]"
+                    )
 
     np = int(sys.argv[1])
     if np < 1:
@@ -153,7 +201,8 @@ def main(args):
     params = {'x': x, 'y': y,
               'np': np, 'iterations': iterations,
               'n': n, 'm': m,
-              'warmup':10
+              'warmup':10,
+              'output_filepath': '.'
             }
 
     charm.thisProxy.updateGlobals(params, awaitable=True).get()
