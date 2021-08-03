@@ -4,7 +4,7 @@ class LCG:
     def __init__(self):
         self.lib = ctypes.CDLL('./librandomdraw.so')
         self.lib.LCG_Create.restype = ctypes.c_void_p
-        self.lib.random_draw.restype = ctypes.c_double
+        self.lib.random_draw.restype = ctypes.c_ulonglong
         self.lcg_ptr = ctypes.c_void_p(self.lib.LCG_Create())
         print("Pointer is:", self.lcg_ptr)
         self.init()
@@ -19,4 +19,5 @@ class LCG:
         self.lib.LCG_jump(c_m, c_bound, self.lcg_ptr)
     def random_draw(self, mu):
         c_mu = ctypes.c_double(mu)
-        return float(self.lib.random_draw(c_mu, self.lcg_ptr))
+        random_val = self.lib.random_draw(c_mu, self.lcg_ptr)
+        return ctypes.c_ulonglong(random_val).value

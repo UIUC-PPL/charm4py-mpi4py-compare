@@ -30,7 +30,6 @@ static uint64_t  LCG_seed_init = 27182818285; //used to (re)set seed
 random_draw_t *LCG_Create()
 {
   random_draw_t *lcg = malloc(sizeof(random_draw_t));
-  printf("The pointer is: %p\n", lcg);
   return lcg;
 }
 
