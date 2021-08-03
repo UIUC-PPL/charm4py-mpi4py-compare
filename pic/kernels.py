@@ -2,6 +2,7 @@ from definitions import *
 import math
 import random
 from random_draw import *
+from numba import njit, jit
 
 RNG = LCG()
 
@@ -76,3 +77,53 @@ def initialize_geometric(n_input: int, L: int, rho: float, tile: BoundingBox,
                 this_particle[PARTICLE_M] = m
                 pi += 1
     return particles
+
+@njit
+def compute_coulomb(x_dist: float, y_dist: float, q1: float, q2: float, forces):
+
+    r2 = x_dist * x_dist + y_dist * y_dist
+    r = math.sqrt(r2)
+    f_coulomb = q1 * q2 / r2
+    forces[0] = f_coulomb * x_dist/r  # f_coulomb * cos_theta
+    forces[1] = f_coulomb * y_dist/r  # f_coulomb * sin_theta
+
+    return 0
+
+@njit
+def compute_total_force(p: np.ndarray, tile: BoundingBox, grid: np.ndarray, forces):
+    temp_forces = np.empty(2, dtype=np.float64)
+
+    n_rows = tile.top-tile.bottom+1
+
+    # Coordinates of the cell containing the particle
+    y = np.int64(math.floor(p[PARTICLE_Y]))
+    x = np.int64(math.floor(p[PARTICLE_X]))
+
+    rel_x = p[PARTICLE_X] - x
+    rel_y = p[PARTICLE_Y] - y
+
+    x = x - tile.left
+    y = y - tile.bottom
+
+    compute_coulomb(rel_x, rel_y, p[PARTICLE_Q], grid[x,y], temp_forces)
+
+    tmp_res_x = temp_forces[0]
+    tmp_res_y = temp_forces[1]
+
+    # Coulomb force from bottom-left charge
+    compute_coulomb(rel_x, 1.0-rel_y, p[PARTICLE_Q], grid[x,y+1], temp_forces)
+    tmp_res_x += temp_forces[0]
+    tmp_res_y -= temp_forces[1]
+
+    # Coulomb force from top-right charge
+    compute_coulomb(1.0-rel_x, rel_y, p[PARTICLE_Q], grid[x+1,y], temp_forces)
+    tmp_res_x -= temp_forces[0]
+    tmp_res_y += temp_forces[1]
+
+    # Coulomb force from bottom-right charge
+    compute_coulomb(1.0-rel_x, 1.0-rel_y, p[PARTICLE_Q], grid[x+1,y+1], temp_forces)
+    tmp_res_x -= temp_forces[0]
+    tmp_res_y -= temp_forces[1]
+
+    forces[0] = tmp_res_x
+    forces[1] = tmp_res_y
