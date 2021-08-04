@@ -3,6 +3,7 @@ import math
 import random
 from random_draw import *
 from numba import njit, jit
+from array import array
 
 RNG = LCG()
 
@@ -127,3 +128,55 @@ def compute_total_force(p: np.ndarray, tile: BoundingBox, grid: np.ndarray, forc
 
     forces[0] = tmp_res_x
     forces[1] = tmp_res_y
+
+@njit
+def find_owner_simple(p: np.ndarray, width: int, height: int,
+                      num_procsx: int, icrit: int, jcrit: int,
+                      ileftover: int, jleftover: int
+                      ):
+    x = math.floor(p[PARTICLE_X])
+    y = math.floor(p[PARTICLE_Y])
+
+    IDx = x // width
+    IDy = y // height
+
+    return IDy * num_procsx + IDx
+
+@njit
+def verify_particle(p: np.ndarray, L: float, iterations: int):
+    x_final = p[PARTICLE_X0] + (iterations+1) * (2.0*p[PARTICLE_K]+1)
+    y_final = p[PARTICLE_Y0] + (iterations+1) * p[PARTICLE_M]
+
+    x_periodic = (x_final % L) if x_final >= 0.0 else L + (x_final % L)
+    y_periodic = (y_final % L) if (y_final >= 0.0) else L + (y_final % L)
+
+    return not (abs(p[PARTICLE_X] - x_periodic) > epsilon \
+                or abs(p[PARTICLE_Y] - y_periodic) > epsilon)
+
+def add_particle_to_buffer(p: np.ndarray, array: array):
+    array.extend(p)
+
+def attach_received_particles(my_particles: np.ndarray, received_particles: array):
+    n_received = len(received_particles) // PARTICLE_FIELDS
+    received_ndarray = np.frombuffer(received_particles, dtype=np.float64)
+    received_ndarray = np.reshape(received_ndarray,
+                                  (n_received, PARTICLE_FIELDS)
+                                  )
+    return np.concatenate((my_particles, received_ndarray))
+
+
+def bad_patch(patch: BoundingBox, patch_contain: BoundingBox):
+    if patch.left >= patch.right or patch.bottom >= patch.top:
+        return 1
+    if patch_contain:
+        if patch.left < patch_contain.left or patch.right >= patch_contain.right:
+            return 2
+        if patch.bottom < patch_contain.bottom or patch.top >= patch_contain.top:
+            return 3
+    return 0
+
+def contain(x: int, y: int, patch: BoundingBox):
+    conds = [x < patch.left, x > patch.right,
+             y < patch.bottom, y > patch.top
+             ]
+    return not any(conds)
