@@ -14,7 +14,7 @@ def initialize_grid(tile: BoundingBox):
 
     for y in range(tile.bottom, tile.top+1):
         for x in range(tile.left, tile.right+1):
-            grid[y-tile.bottom, x-tile.left] = Q if x % 2 == 0 else -Q
+            grid[x-tile.left, y-tile.bottom] = Q if x % 2 == 0 else -Q
     return grid
 
 def finish_particle_initialization(particles, num_particles_prefix):
