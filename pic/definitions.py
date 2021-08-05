@@ -51,7 +51,7 @@ def enforce(x, err_msg):
 def parsed_iters(iters):
     iters = int(iters)
     enforce(iters > 0,
-            f"Number fo time steps must be positive: {iters}"
+            f"Number of time steps must be positive: {iters}"
             )
     return iters
 
@@ -88,7 +88,7 @@ def parsed_d(i):
     return d
 
 def parsed_mode(i):
-    enforce(lower(i) == 'geometric',
+    enforce(i.lower() == 'geometric',
             "Currently only geometric mode is implemented"
             )
     return i
@@ -136,6 +136,10 @@ def parse_args(argv):
                       "The currently-supported modes and their parameters are: "
                       "GEOMETRIC: attenuation factor.\n",
                       action='append'
+                      )
+    argp.add_argument("-v", "--verbose",
+                      help="Output additional information for the run.",
+                      action='store_true'
                       )
     return argp.parse_args()
 
