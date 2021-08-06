@@ -2,8 +2,17 @@ from definitions import *
 import math
 import random
 from random_draw import *
-from numba import njit, jit
 from array import array
+import numba
+PY_ONLY = False
+
+def njit(func):
+    def wrapper(*args, **kwargs):
+        return func(*args, **kwargs)
+    return wrapper
+
+if not PY_ONLY:
+    njit = numba.njit
 
 RNG = LCG()
 
