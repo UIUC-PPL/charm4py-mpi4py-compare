@@ -106,8 +106,9 @@ def compute_total_force(p: np.ndarray, tile: BoundingBox, grid: np.ndarray, forc
     n_rows = tile.top-tile.bottom+1
 
     # Coordinates of the cell containing the particle
-    y = np.int64(math.floor(p[PARTICLE_Y]))
-    x = np.int64(math.floor(p[PARTICLE_X]))
+    y = math.floor(p[PARTICLE_Y])
+    x = math.floor(p[PARTICLE_X])
+    x_sav=x
 
     rel_x = p[PARTICLE_X] - x
     rel_y = p[PARTICLE_Y] - y
@@ -139,6 +140,17 @@ def compute_total_force(p: np.ndarray, tile: BoundingBox, grid: np.ndarray, forc
     forces[1] = tmp_res_y
 
 @njit
+def update_particle(p: np.ndarray, forces: np.ndarray, L: int):
+    ax = forces[0] * MASS_INV
+    ay = forces[1] * MASS_INV
+
+    p[PARTICLE_X] = (p[PARTICLE_X] + p[PARTICLE_VX]*DT + 0.5*ax*DT*DT + L) % L
+    p[PARTICLE_Y] = (p[PARTICLE_Y] + p[PARTICLE_VY]*DT + 0.5*ay*DT*DT + L) % L
+
+    p[PARTICLE_VX] = ax * DT
+    p[PARTICLE_VY] = ay * DT
+
+@njit
 def find_owner_simple(p: np.ndarray, width: int, height: int,
                       num_procsx: int, icrit: int, jcrit: int,
                       ileftover: int, jleftover: int
@@ -165,13 +177,14 @@ def verify_particle(p: np.ndarray, L: float, iterations: int):
 def add_particle_to_buffer(p: np.ndarray, array: array):
     array.extend(p)
 
-def attach_received_particles(my_particles: np.ndarray, received_particles: array):
+def attach_received_particles(my_particles: np.ndarray,
+                              received_particles: np.ndarray
+                              ):
     n_received = len(received_particles) // PARTICLE_FIELDS
-    received_ndarray = np.frombuffer(received_particles, dtype=np.float64)
-    received_ndarray = np.reshape(received_ndarray,
-                                  (n_received, PARTICLE_FIELDS)
-                                  )
-    return np.concatenate((my_particles, received_ndarray))
+    received = received_particles.reshape((n_received,
+                                           PARTICLE_FIELDS)
+                                           )
+    return np.concatenate([my_particles, received])
 
 
 def bad_patch(patch: BoundingBox, patch_contain: BoundingBox):
@@ -189,3 +202,9 @@ def contain(x: int, y: int, patch: BoundingBox):
              y < patch.bottom, y > patch.top
              ]
     return not any(conds)
+
+def resize_buffer(buf: array, counts: int):
+    if len(buf) < counts:
+        buf.extend(bytearray(counts-len(buf)))
+
+
