@@ -6,7 +6,6 @@ class LCG:
         self.lib.LCG_Create.restype = ctypes.c_void_p
         self.lib.random_draw.restype = ctypes.c_ulonglong
         self.lcg_ptr = ctypes.c_void_p(self.lib.LCG_Create())
-        print("Pointer is:", self.lcg_ptr)
         self.init()
 
     def __del__(self):
