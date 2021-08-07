@@ -44,7 +44,7 @@ def main():
     my_idy = rank // num_procsx
 
 
-    width = L / num_procsx
+    width = L // num_procsx
     if width < 2*k:
         if rank == 0:
             print(f"k-value too large: {k}, must be no greater than: {width//2}")
@@ -60,7 +60,7 @@ def main():
 
     icrit = (width + 1) * ileftover
 
-    height = L / num_procsy
+    height = L // num_procsy
     if height < m:
         if rank == 0:
             print(f"m-value too large: {m}, must be no greater than {height}")
