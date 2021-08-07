@@ -2,6 +2,7 @@ from numba.experimental import jitclass
 import numba
 import numpy as np
 from argparse import ArgumentParser, ArgumentTypeError
+import time
 
 PRK_M_PI = 3.14159265358979323846264338327950288419716939937510
 MASS_INV = 1.0
@@ -30,6 +31,9 @@ PARTICLE_Y0 = 6
 PARTICLE_K = 7
 PARTICLE_M = 8
 PARTICLE_ID = 9
+
+wtime = time.perf_counter_ns
+TOTAL_TIME, COMP_TIME, COMM_TIME = range(3)
 
 @jitclass
 class BoundingBox:
@@ -139,6 +143,16 @@ def parse_args(argv):
                       )
     argp.add_argument("-v", "--verbose",
                       help="Output additional information for the run.",
+                      action='store_true'
+                      )
+    argp.add_argument('-o', '--output',
+                      help="Write detailed timing information from each "
+                      "rank in each iteration "
+                      "to a standalone output file."
+                      )
+    argp.add_argument('--add_datetime',
+                      help="Will prepend information regarding current "
+                      "date/time to the filename provided to '--output'",
                       action='store_true'
                       )
     return argp.parse_args()
