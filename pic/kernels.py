@@ -164,6 +164,25 @@ def find_owner_simple(p: np.ndarray, width: int, height: int,
     return IDy * num_procsx + IDx
 
 @njit
+def find_owner_general(p: np.ndarray, width: int, height: int,
+                      num_procsx: int, icrit: int, jcrit: int,
+                      ileftover: int, jleftover: int
+                      ):
+    x = math.floor(p[PARTICLE_X])
+    y = math.floor(p[PARTICLE_Y])
+    if x < icrit:
+        idx = x // (width+1)
+    else:
+        idx = ileftover + (x-icrit) // width
+
+    if y < jcrit:
+        idy = y // (height+1)
+    else:
+        idy = jleftover + (y-jcrit) // height
+
+    return idy * num_procsx + idx
+
+@njit
 def verify_particle(p: np.ndarray, L: float, iterations: int):
     x_final = p[PARTICLE_X0] + (iterations+1) * (2.0*p[PARTICLE_K]+1)
     y_final = p[PARTICLE_Y0] + (iterations+1) * p[PARTICLE_M]
