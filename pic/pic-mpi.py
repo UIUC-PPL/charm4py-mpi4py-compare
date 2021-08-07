@@ -199,7 +199,31 @@ def main():
         num_particles = len(particles)
         if rank == 0:
             print(f"Iteration {iter} complete.")
+    n_incorrect = 0
+    id_checksum = 0
+    for p in particles:
+        n_incorrect += int(verify_particle(p, L, iterations + 1))
+        id_checksum += int(p[PARTICLE_ID])
 
+    reduction_vals = np.ndarray(2, dtype=np.int64)
+    reduction_vals[0] = n_incorrect
+    reduction_vals[1] = id_checksum
+    totals = np.zeros(2, dtype=np.int64)
+    comm.Reduce([reduction_vals, MPI.LONG_LONG],
+                [totals, MPI.LONG_LONG],
+                op=MPI.SUM, root=0
+                )
+
+    if rank == 0:
+        total_incorrect, id_checksum = totals
+        num_particles_checksum = (total_particles)*(total_particles+1) // 2
+        if total_incorrect:
+            print(f"There are {total_incorrect} miscalculated particle locations.")
+        else:
+            if id_checksum != num_particles_checksum:
+                print("Particle checksum incorrect.")
+            else:
+                print("Solution validates.")
 
     exit()
 
