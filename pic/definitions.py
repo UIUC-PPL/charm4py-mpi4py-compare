@@ -33,7 +33,7 @@ PARTICLE_M = 8
 PARTICLE_ID = 9
 
 wtime = time.perf_counter_ns
-TOTAL_TIME, COMP_TIME, COMM_TIME = range(3)
+TOTAL_TIME, COMP_TIME, COMM_TIME, START_PARTICLES, END_PARTICLES = range(5)
 
 @jitclass
 class BoundingBox:

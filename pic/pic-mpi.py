@@ -113,8 +113,8 @@ def main():
     send_counts = np.ndarray((8, 1), dtype=np.int32)
     recv_counts = np.ndarray((8, 1), dtype=np.int32)
 
-    # total time, compute time, communicate time
-    timers = np.ndarray((iterations+1, 3), dtype=np.int64)
+    # total time, compute time, communicate time, start particles, end particles
+    timers = np.ndarray((iterations+1, 5), dtype=np.int64)
 
     # perform the simulation
     for iter in range(iterations + 1):
@@ -124,6 +124,7 @@ def main():
 
         iter_start = wtime()
         comp_start = iter_start
+        start_particles = len(particles)
         # we need the size of these buffers to be exactly the
         # number of particles sent/received
         # (unless we don't, should check later)
@@ -202,10 +203,13 @@ def main():
 
         comm_end = wtime()
         iter_end = comm_end
+        end_particles = len(particles)
 
         timers[iter][TOTAL_TIME] = iter_end - iter_start
         timers[iter][COMP_TIME] = comp_end - comp_start
         timers[iter][COMM_TIME] = comm_end - comm_start
+        timers[iter][START_PARTICLES] = start_particles
+        timers[iter][END_PARTICLES] = end_particles
 
         num_particles = len(particles)
         if rank == 0 and sim_params.verbose:
