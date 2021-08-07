@@ -6,7 +6,6 @@ from array import array
 from mpi4py import MPI
 import numpy as np
 import sys
-wtime = time.perf_counter_ns
 
 def main():
     comm = MPI.COMM_WORLD
@@ -112,11 +111,19 @@ def main():
         print(f"Total particles in the simulation: {total_particles}.")
 
     send_counts = np.ndarray((8, 1), dtype=np.int32)
-    recv_counts = np.ndarray((8,1), dtype=np.int32)
-    # TODO: timers for each timestep
+    recv_counts = np.ndarray((8, 1), dtype=np.int32)
+
+    # total time, compute time, communicate time
+    timers = np.ndarray((iterations+1, 3), dtype=np.int64)
 
     # perform the simulation
     for iter in range(iterations + 1):
+        if iter == 1:
+            comm.barrier()
+            sim_tstart = wtime()
+
+        iter_start = wtime()
+        comp_start = iter_start
         # we need the size of these buffers to be exactly the
         # number of particles sent/received
         # (unless we don't, should check later)
@@ -124,11 +131,7 @@ def main():
 
         send_bufs = [array('d') for _ in range(len(nbr))]
         recv_bufs = [array('d') for _ in range(len(nbr))]
-        if iter == 1:
-            comm.barrier()
-            t_start = wtime()
         forces = np.ndarray((2,), dtype=np.float64)
-        idx = 0
         for p in particles:
             compute_total_force(p, my_tile, grid, forces)
             update_particle(p, forces, L)
@@ -161,7 +164,8 @@ def main():
                       f" my neighbors are {nbr}, particle idx is {idx}, total particles: {len(particles)}, particle is {p}"
                       )
                 sys.exit()
-        idx += 1
+        comp_end = wtime()
+        comm_start = wtime()
 
         requests = [MPI.REQUEST_NULL for i in range(16)]
         for i in range(8):
@@ -196,9 +200,18 @@ def main():
             # Can we somehow receive all particles into the same buffer?
             particles = attach_received_particles(particles, recv_bufs[i])
 
+        comm_end = wtime()
+        iter_end = comm_end
+
+        timers[iter][TOTAL_TIME] = iter_end - iter_start
+        timers[iter][COMP_TIME] = comp_end - comp_start
+        timers[iter][COMM_TIME] = comm_end - comm_start
+
         num_particles = len(particles)
-        if rank == 0:
-            print(f"Iteration {iter} complete.")
+        if rank == 0 and sim_params.verbose:
+            print(f"Iteration {iter} complete in {(iter_end - iter_start)/1e9}s.")
+    sim_tend = wtime()
+    sim_elapsed = sim_tend - sim_tstart
     n_incorrect = 0
     id_checksum = 0
     for p in particles:
@@ -213,7 +226,8 @@ def main():
                 [totals, MPI.LONG_LONG],
                 op=MPI.SUM, root=0
                 )
-
+    all_timers = comm.gather(timers, root=0)
+    # write timers to file (if provided)
     if rank == 0:
         total_incorrect, id_checksum = totals
         num_particles_checksum = (total_particles)*(total_particles+1) // 2
@@ -224,6 +238,12 @@ def main():
                 print("Particle checksum incorrect.")
             else:
                 print("Solution validates.")
+        if sim_params.output:
+            if sim_params.add_datetime:
+                dt_str = get_datetime_str()
+            else:
+                dt_str = None
+            write_output(sim_params.output, all_timers, prefix=dt_str)
 
     exit()
 
