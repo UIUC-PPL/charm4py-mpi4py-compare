@@ -4,6 +4,7 @@ import random
 from random_draw import *
 from array import array
 import numba
+import sys
 PY_ONLY = False
 
 def njit(func):
@@ -226,4 +227,33 @@ def resize_buffer(buf: array, counts: int):
     if len(buf) < counts:
         buf.extend(bytearray(counts-len(buf)))
 
+
+def get_datetime_str():
+    from datetime import datetime
+    now = datetime.now()
+    dt_string = now.strftime("%Y_%m_%d_%H_%M_%S")
+    return dt_string
+
+def write_output(filename, timing_data, prefix=None):
+    if prefix:
+        prefix = prefix + '_'
+    else:
+        prefix = ''
+    filename = prefix + filename
+    header = "Rank,Iteration,Total Time,Comp Time,Comm Time\n"
+    with open(filename, 'w') as open_file:
+        open_file.write(f"#{' '.join(sys.argv)}\n")
+        open_file.write("#NOTE: Iteration 0 is a warmup iteration\n")
+        open_file.write(header)
+
+        for rank, rank_info in enumerate(timing_data):
+
+            for iter_num, iter_data in enumerate(rank_info):
+                iter_data = iter_data / 1e9
+                t_total = iter_data[TOTAL_TIME]
+                t_comp = iter_data[COMP_TIME]
+                t_comm = iter_data[COMM_TIME]
+
+                data_tuple = (rank, iter_num, t_total, t_comp, t_comm)
+                open_file.write(','.join(map(str, data_tuple)) + '\n')
 
