@@ -1,4 +1,3 @@
-import time
 from definitions import *
 from kernels import *
 from random_draw import *
@@ -93,7 +92,6 @@ def main():
     nbr[6] = nbr[0] - num_procsx + num_procs if my_idy == 0 else nbr[0] - num_procsx
     nbr[7] = nbr[1] - num_procsx + num_procs if my_idy == 0 else nbr[1] - num_procsx
 
-
     grid = initialize_grid(my_tile)
     particles = initialize_geometric(n, L, rho, my_tile, k, m)
     num_particles = len(particles)
@@ -113,14 +111,18 @@ def main():
     send_counts = np.ndarray((8, 1), dtype=np.int32)
     recv_counts = np.ndarray((8, 1), dtype=np.int32)
 
-    # total time, compute time, communicate time, start particles, end particles
-    timers = np.ndarray((iterations+1, 5), dtype=np.int64)
+    # total time, compute time, communicate time, (total) simulation time,
+    # start particles, end particles
+    timers = np.ndarray((iterations+1, 6), dtype=np.float64)
 
     # perform the simulation
     for iter in range(iterations + 1):
         if iter == 1:
             comm.barrier()
-            sim_tstart = wtime()
+        if iter < 2:
+            # include some data for warmup iter, but
+            # dont' include in total
+            sim_start = wtime()
 
         iter_start = wtime()
         comp_start = iter_start
@@ -205,7 +207,8 @@ def main():
         iter_end = comm_end
         end_particles = len(particles)
 
-        timers[iter][TOTAL_TIME] = iter_end - iter_start
+        timers[iter][ELAPSED_TIME] = iter_end - sim_start
+        timers[iter][ITER_TIME] = iter_end - iter_start
         timers[iter][COMP_TIME] = comp_end - comp_start
         timers[iter][COMM_TIME] = comm_end - comm_start
         timers[iter][START_PARTICLES] = start_particles
@@ -213,9 +216,11 @@ def main():
 
         num_particles = len(particles)
         if rank == 0 and sim_params.verbose:
-            print(f"Iteration {iter} complete in {(iter_end - iter_start)/1e9}s.")
-    sim_tend = wtime()
-    sim_elapsed = sim_tend - sim_tstart
+            print(f"Iteration {iter} complete in {iter_end - iter_start}s.")
+    sim_end = wtime()
+    sim_elapsed = sim_end - sim_start
+    if rank == 0:
+        print(f"Sim elapsed: {sim_elapsed}")
     n_incorrect = 0
     id_checksum = 0
     for p in particles:
