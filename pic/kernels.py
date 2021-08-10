@@ -17,14 +17,14 @@ if not PY_ONLY:
 
 RNG = LCG()
 
-def initialize_grid(tile: BoundingBox):
-    n_columns = tile.right-tile.left+1
-    n_rows = tile.top-tile.bottom+1
+def initialize_grid(tile: np.ndarray):
+    n_columns = tile[RIGHT]-tile[LEFT]+1
+    n_rows = tile[TOP]-tile[BOTTOM]+1
     grid = np.ndarray((n_columns, n_rows), dtype=np.float64)
 
-    for y in range(tile.bottom, tile.top+1):
-        for x in range(tile.left, tile.right+1):
-            grid[x-tile.left, y-tile.bottom] = Q if x % 2 == 0 else -Q
+    for y in range(tile[BOTTOM], tile[TOP]+1):
+        for x in range(tile[LEFT], tile[RIGHT]+1):
+            grid[x-tile[LEFT], y-tile[BOTTOM]] = Q if x % 2 == 0 else -Q
     return grid
 
 def finish_particle_initialization(particles, num_particles_prefix):
@@ -60,25 +60,25 @@ def finish_particle_initialization(particles, num_particles_prefix):
 
 
 
-def initialize_geometric(n_input: int, L: int, rho: float, tile: BoundingBox,
+def initialize_geometric(n_input: int, L: int, rho: float, tile: np.ndarray,
                          k: float, m: float):
 
     n_placed = 0
     A = n_input * ((1.0-rho) / (1.0-math.pow(rho, L))) / L
 
-    for x in range(tile.left, tile.right):
-        start_index = tile.bottom+x*L
+    for x in range(tile[LEFT], tile[RIGHT]):
+        start_index = tile[BOTTOM]+x*L
         RNG.jump(2*start_index, 0)
         # cleanup: this can be done in constant time
-        for y in range(tile.bottom, tile.top):
+        for y in range(tile[BOTTOM], tile[TOP]):
             n_placed += RNG.random_draw(A*(rho**x))
 
     particles = np.ndarray((n_placed, PARTICLE_FIELDS), dtype=np.float64)
     pi = 0
-    for x in range(tile.left, tile.right):
-        start_index = tile.bottom+x*L
+    for x in range(tile[LEFT], tile[RIGHT]):
+        start_index = tile[BOTTOM]+x*L
         RNG.jump(2*start_index, 0)
-        for y in range(tile.bottom, tile.top):
+        for y in range(tile[BOTTOM], tile[TOP]):
             n_tile_particles = RNG.random_draw(A*(rho**x))
             for p in range(n_tile_particles):
                 this_particle = particles[pi]
@@ -101,10 +101,10 @@ def compute_coulomb(x_dist: float, y_dist: float, q1: float, q2: float, forces):
     return 0
 
 @njit
-def compute_total_force(p: np.ndarray, tile: BoundingBox, grid: np.ndarray, forces):
+def compute_total_force(p: np.ndarray, tile: np.ndarray, grid: np.ndarray, forces):
     temp_forces = np.empty(2, dtype=np.float64)
 
-    n_rows = tile.top-tile.bottom+1
+    n_rows = tile[TOP]-tile[BOTTOM]+1
 
     # Coordinates of the cell containing the particle
     y = math.floor(p[PARTICLE_Y])
@@ -114,8 +114,8 @@ def compute_total_force(p: np.ndarray, tile: BoundingBox, grid: np.ndarray, forc
     rel_x = p[PARTICLE_X] - x
     rel_y = p[PARTICLE_Y] - y
 
-    x = x - tile.left
-    y = y - tile.bottom
+    x = x - tile[LEFT]
+    y = y - tile[BOTTOM]
 
     compute_coulomb(rel_x, rel_y, p[PARTICLE_Q], grid[x,y], temp_forces)
 
@@ -166,9 +166,9 @@ def find_owner_simple(p: np.ndarray, width: int, height: int,
 
 @njit
 def find_owner_general(p: np.ndarray, width: int, height: int,
-                      num_procsx: int, icrit: int, jcrit: int,
-                      ileftover: int, jleftover: int
-                      ):
+                       num_procsx: int, icrit: int, jcrit: int,
+                       ileftover: int, jleftover: int
+                       ):
     x = math.floor(p[PARTICLE_X])
     y = math.floor(p[PARTICLE_Y])
     if x < icrit:
@@ -240,7 +240,7 @@ def write_output(filename, timing_data, prefix=None):
     else:
         prefix = ''
     filename = prefix + filename
-    header = "Rank,Iteration,Total Time,Comp Time,Comm Time,Start Particles,End Particles\n"
+    header = "Rank,Iteration,Elapsed Time,Iteration Time,Comp Time,Comm Time,Start Particles,End Particles\n"
     with open(filename, 'w') as open_file:
         open_file.write(f"#{' '.join(sys.argv)}\n")
         open_file.write("#NOTE: Iteration 0 is a warmup iteration\n")
@@ -249,14 +249,15 @@ def write_output(filename, timing_data, prefix=None):
         for rank, rank_info in enumerate(timing_data):
 
             for iter_num, iter_data in enumerate(rank_info):
-                t_total = iter_data[TOTAL_TIME] / 1e9
-                t_comp = iter_data[COMP_TIME] / 1e9
-                t_comm = iter_data[COMM_TIME] / 1e9
+                t_elapsed = iter_data[ELAPSED_TIME]
+                t_iter = iter_data[ITER_TIME]
+                t_comp = iter_data[COMP_TIME]
+                t_comm = iter_data[COMM_TIME]
                 start_particles = iter_data[START_PARTICLES]
                 end_particles = iter_data[END_PARTICLES]
 
                 data_tuple = (rank, iter_num,
-                              t_total, t_comp, t_comm,
+                              t_elapsed, t_iter, t_comp, t_comm,
                               start_particles, end_particles
                               )
                 open_file.write(','.join(map(str, data_tuple)) + '\n')
