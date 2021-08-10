@@ -32,21 +32,12 @@ PARTICLE_K = 7
 PARTICLE_M = 8
 PARTICLE_ID = 9
 
-wtime = time.perf_counter_ns
-TOTAL_TIME, COMP_TIME, COMM_TIME, START_PARTICLES, END_PARTICLES = range(5)
+wtime = time.time
+ELAPSED_TIME, ITER_TIME, COMP_TIME, COMM_TIME, START_PARTICLES, END_PARTICLES = range(6)
+LEFT, RIGHT, BOTTOM, TOP = range(4)
 
-@jitclass
-class BoundingBox:
-    left: int
-    right: int
-    bottom: int
-    top: int
-
-    def __init__(self, left: int, right: int, bottom: int, top: int):
-        self.left = left
-        self.right = right
-        self.bottom = bottom
-        self.top = top
+def BoundingBox(left, right, top, bottom):
+    return np.array([left, right, top, bottom], dtype=np.int32)
 
 def enforce(x, err_msg):
     if not x:
@@ -97,10 +88,17 @@ def parsed_mode(i):
             )
     return i
 
+def parsed_num_chares(n):
+    n = int(n)
+    enforce(n > 0,
+            f"Number of chares must be greater than 0: {n}"
+            )
+    return n
+
 def parsed_yvelocity(velocity):
     return int(velocity)
 
-def parse_args(argv):
+def parse_args(args):
     argp = ArgumentParser(description='PIC PRK For Python')
     argp.add_argument('-i', '--iterations',
                       help="The number of iterations in the simulation.",
@@ -109,6 +107,11 @@ def parse_args(argv):
     argp.add_argument('-s', '--grid_size',
                       help="The number of cells in the grid.",
                       type=parsed_grid_size
+                      )
+    argp.add_argument('-c', '--num_chares',
+                      help="The number of chares to create for the simulation. "
+                      "Ignored when run under mpi4py.",
+                      type=parsed_num_chares
                       )
     argp.add_argument('-n', '--num_particles',
                       help="The number of particles in the simulation.",
@@ -155,7 +158,7 @@ def parse_args(argv):
                       "date/time to the filename provided to '--output'",
                       action='store_true'
                       )
-    return argp.parse_args()
+    return argp.parse_args(args[1::])
 
 def validate_args(parsed_args: dict):
     enforce(parsed_args.migration_delay < parsed_args.period,
