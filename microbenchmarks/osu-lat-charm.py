@@ -3,6 +3,7 @@ import time
 import numpy as np
 import sys
 warmup=50
+groupsize=10
 
 class Ping(Chare):
     def __init__(self, print_format):
@@ -24,7 +25,7 @@ class Ping(Chare):
     @coro
     def do_iteration(self, message_size, num_iters, done_future):
         data = np.zeros(message_size, dtype='int8')
-        timing_data = np.zeros((warmup+num_iters) // 10, dtype=np.float64)
+        timing_data = np.zeros((warmup+num_iters) // groupsize, dtype=np.float64)
         partner_idx = int(not self.thisIndex)
         partner = self.thisProxy[partner_idx]
         partner_channel = Channel(self, partner)
@@ -32,11 +33,11 @@ class Ping(Chare):
         tstart = time.perf_counter_ns()
         tstart_iter = 0
 
-        for grouping in range((num_iters + warmup)//10):
-            for inner in range(10):
-                if grouping == 1:
+        for grouping in range((num_iters + warmup)//groupsize):
+            tstart_iter = time.perf_counter_ns()
+            for inner in range(groupsize):
+                if grouping == warmup//groupsize:
                     tstart = time.perf_counter_ns()
-                tstart_iter = time.perf_counter_ns()
                 if self.am_low_chare:
                     partner_channel.send(data)
                     # If we don't capture this,
@@ -49,7 +50,7 @@ class Ping(Chare):
                     d=partner_channel.recv()
                     partner_channel.send(data)
             tend_iter = time.perf_counter_ns()
-            timing_data[grouping] = (tend_iter - tstart_iter) / 10
+            timing_data[grouping] = ((tend_iter - tstart_iter)/1e9) / groupsize
 
         tend = time.perf_counter_ns()
 
@@ -95,7 +96,7 @@ class Ping(Chare):
                     grouping = inner * 10
                     output = [grouping, message_size,
                               n_trials, warmup,
-                              iter_time/1e9
+                              iter_time/2
                               ]
                     of.write(','.join(map(str, output)) + '\n')
 
