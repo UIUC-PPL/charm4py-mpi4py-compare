@@ -3,6 +3,7 @@ import time
 import numpy as np
 import array
 import pandas as pd
+import sys
 
 
 LOW_ITER_THRESHOLD = 8192
@@ -57,7 +58,14 @@ class Block(Chare):
             else:
                 self.output_df = pd.concat([self.output_df, iter_data])
             if message_size == self.datarange[1]:
-                self.output_df.to_csv(iter_filename, index=False)
+                from datetime import datetime
+                now = datetime.now()
+                dt_string = now.strftime("%Y_%m_%d_%H_%M_%S")
+                iter_filename = f"{dt_string}_{iter_filename}"
+
+                with open(iter_filename, 'w') as of:
+                    of.write('# ' + ' '.join(sys.argv) + '\n')
+                    self.output_df.to_csv(of, index=False)
 
         self.reduce(done_future)
 
