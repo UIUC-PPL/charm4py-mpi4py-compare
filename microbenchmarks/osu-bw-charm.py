@@ -119,7 +119,7 @@ def main(args):
         iter_datafile_base = None
 
     peMap = Group(ArrMap)
-    blocks = Array(Block, 2, args=[min_msg_size, max_msg_size], map = peMap)
+    blocks = Array(Block, 2, args=[min_msg_size, max_msg_size], map=peMap)
     charm.awaitCreation(blocks)
     msg_size = min_msg_size
 
