@@ -23,6 +23,7 @@ class Block(Chare):
     def do_iteration(self, message_size, windows, num_iters, done_future, iter_datafile_base):
         local_data = np.ones(message_size, dtype='int8')
         remote_data = np.ones(message_size, dtype='int8')
+        t_data = np.zeros(num_iters+WARMUP_ITERS, dtype='float64')
 
         partner_idx = int(not self.thisIndex[0])
         partner = self.thisProxy[partner_idx]
@@ -34,6 +35,7 @@ class Block(Chare):
         for idx in range(num_iters + WARMUP_ITERS):
             if idx == WARMUP_ITERS:
                 tstart = time.time()
+            tst = time.perf_counter()
             if self.am_low_chare:
                 for _ in range(windows):
                     partner_channel.send(local_data)
@@ -41,19 +43,15 @@ class Block(Chare):
             else:
                 for _ in range(windows):
                     # The lifetime of this object has big impact on performance
-                    d = partner_channel.recv()
+                    d=partner_channel.recv()
                 partner_ack_channel.send(1)
-            tend=time.time()
-
-        # if self.am_low_chare:
-
-        tend = time.time()
-        elapsed_time = tend - tstart
+            tend = time.perf_counter()
+            t_data[idx] = tend-tst
+        elapsed_time = time.time() - tstart
         if self.am_low_chare:
             self.display_iteration_data(elapsed_time, num_iters, windows, message_size)
-        if False:
             iter_filename = iter_datafile_base + str(self.thisIndex[0]) + '.csv'
-            # iter_data = self.write_iteration_data(num_iters, windows, message_size, papi_data, t_data)
+            iter_data = self.write_iteration_data(num_iters, windows, message_size, t_data)
             if self.output_df is None:
                 self.output_df = iter_data
             else:
@@ -63,28 +61,21 @@ class Block(Chare):
 
         self.reduce(done_future)
 
-    def write_iteration_data(self, num_iters, windows, message_size, papi_data, timing_data):
-        assert len(papi_data) == len(timing_data) == num_iters + WARMUP_ITERS
-        header = ("Chare,Msg Size, Iteration, Bandwidth (MB/s), "
-                  "L2 Miss Rate, L3 Miss Rate, L2 Misses, L2 Accesses, "
-                  "L3 Misses, L3 Accesses"
-                  )
+    def write_iteration_data(self, num_iters, windows, message_size, timing_data):
+        header = ("Chare,Msg Size, Iteration, Bandwidth (MB/s)")
         output = pd.DataFrame(columns=header.split(','))
 
         timing_nowarmup = timing_data[WARMUP_ITERS::]
-        papi_nowarmup = papi_data[WARMUP_ITERS::]
-        per_iter_data_sent = message_size / 1e6 * windows
-        for papi, elapsed_s, iteration in zip(papi_nowarmup,
-                                              timing_nowarmup,
-                                              range(num_iters)
-                                              ):
-            l2_tcm, l3_tcm, l2_tca, l3_tca = papi
+        per_iter_data_sent = windows * message_size / 1e6
+
+        for elapsed_s, iteration in zip(timing_nowarmup,
+                                        range(num_iters)
+                                        ):
             bandwidth = (per_iter_data_sent) / elapsed_s
             iter_num = iteration + 1
 
             iter_data = (self.thisIndex[0], message_size, iter_num,
-                         bandwidth, l2_tcm/l2_tca, l3_tcm/l3_tca,
-                         l2_tcm, l2_tca, l3_tcm, l3_tca
+                         bandwidth
                          )
             output.loc[iteration] = iter_data
         return output
