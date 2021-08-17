@@ -4,6 +4,8 @@ import numpy as np
 import array
 import pandas as pd
 import sys
+import random
+import gc
 
 
 LOW_ITER_THRESHOLD = 8192
@@ -11,32 +13,33 @@ WARMUP_ITERS = 10
 
 
 class Block(Chare):
-    def __init__(self, min_data, max_data):
+    def __init__(self):
         self.num_chares = charm.numPes()
         self.am_low_chare = self.thisIndex[0] == 0
-        self.datarange = (min_data, max_data)
         self.output_df = None
+        partner_idx = int(not self.thisIndex[0])
+        self.partner = self.thisProxy[partner_idx]
+        self.partner_channel = Channel(self, self.partner)
+        self.partner_ack_channel = Channel(self, self.partner)
+        self.windows = 0
 
         if self.am_low_chare:
             print("Chare,Msg Size, Iterations, Bandwidth (MB/s)")
 
     @coro
     def do_iteration(self, message_size, windows, num_iters, done_future, iter_datafile_base):
+        self.windows = windows
         local_data = np.ones(message_size, dtype='int8')
         remote_data = np.ones(message_size, dtype='int8')
-        t_data = np.zeros(num_iters+WARMUP_ITERS, dtype='float64')
-
-        partner_idx = int(not self.thisIndex[0])
-        partner = self.thisProxy[partner_idx]
-        partner_channel = Channel(self, partner)
-        partner_ack_channel = Channel(self, partner)
+        partner_channel = self.partner_channel
+        partner_ack_channel = self.partner_ack_channel
 
         tstart = 0
 
         for idx in range(num_iters + WARMUP_ITERS):
+            iter_st = time.perf_counter()
             if idx == WARMUP_ITERS:
-                tstart = time.time()
-            tst = time.perf_counter()
+                tstart = time.perf_counter()
             if self.am_low_chare:
                 for _ in range(windows):
                     partner_channel.send(local_data)
@@ -46,47 +49,48 @@ class Block(Chare):
                     # The lifetime of this object has big impact on performance
                     d=partner_channel.recv()
                 partner_ack_channel.send(1)
-            tend = time.perf_counter()
-            t_data[idx] = tend-tst
-        elapsed_time = time.time() - tstart
+            iter_e = time.perf_counter()
+            if self.am_low_chare:
+                self.iteration_data[self.completed_iterations] = (message_size,
+                                                                  idx,
+                                                                  num_iters,
+                                                                  WARMUP_ITERS,
+                                                                  iter_e - iter_st
+                                                                  )
+                self.completed_iterations += 1
+        elapsed_time = time.perf_counter() - tstart
         if self.am_low_chare:
             self.display_iteration_data(elapsed_time, num_iters, windows, message_size)
-            iter_filename = iter_datafile_base + str(self.thisIndex[0]) + '.csv'
-            iter_data = self.write_iteration_data(num_iters, windows, message_size, t_data)
-            if self.output_df is None:
-                self.output_df = iter_data
-            else:
-                self.output_df = pd.concat([self.output_df, iter_data])
-            if message_size == self.datarange[1]:
-                from datetime import datetime
-                now = datetime.now()
-                dt_string = now.strftime("%Y_%m_%d_%H_%M_%S")
-                iter_filename = f"{dt_string}_{iter_filename}"
-
-                with open(iter_filename, 'w') as of:
-                    of.write('# ' + ' '.join(sys.argv) + '\n')
-                    self.output_df.to_csv(of, index=False)
-
+            if self.completed_iterations == self.total_iterations:
+                self.write_output(iter_datafile_base)
         self.reduce(done_future)
 
-    def write_iteration_data(self, num_iters, windows, message_size, timing_data):
-        header = ("Chare,Msg Size, Iteration, Bandwidth (MB/s)")
-        output = pd.DataFrame(columns=header.split(','))
+    def receive_params(self, iter_params):
+        msg_iters = [x[0] for x in iter_params]
+        self.total_iterations = sum(msg_iters)
+        self.total_iterations += len(iter_params) * WARMUP_ITERS
+        # Message size, iteration, total iterations, warmup iterations, bandwidth (or time)
+        self.iteration_data = np.ndarray((self.total_iterations, 5), dtype=np.float64)
+        self.completed_iterations = 0
 
-        timing_nowarmup = timing_data[WARMUP_ITERS::]
-        per_iter_data_sent = windows * message_size / 1e6
+    def write_output(self, filename_base):
+        import pandas as pd
+        header = ("Message size", "Iteration", "Total Iterations",
+                  "Warmup", "Bandwidth (MB/s)"
+                  )
+        df = pd.DataFrame(self.iteration_data, columns=header)
+        time = df['Bandwidth (MB/s)']
+        data_volume = df['Message size'] * self.windows / 1e6
+        bw = data_volume / time
+        df['Bandwidth (MB/s)'] = bw
 
-        for elapsed_s, iteration in zip(timing_nowarmup,
-                                        range(num_iters)
-                                        ):
-            bandwidth = (per_iter_data_sent) / elapsed_s
-            iter_num = iteration + 1
-
-            iter_data = (self.thisIndex[0], message_size, iter_num,
-                         bandwidth
-                         )
-            output.loc[iteration] = iter_data
-        return output
+        from datetime import datetime
+        now = datetime.now()
+        dt_string = now.strftime("%Y_%m_%d_%H_%M_%S")
+        output_filename = f"{dt_string}_{filename_base}.csv"
+        with open(output_filename, 'w') as of:
+            of.write('# ' + ' '.join(sys.argv) + '\n')
+            df.to_csv(of, index=False)
 
 
     def display_iteration_data(self, elapsed_time, num_iters, windows, message_size):
@@ -119,20 +123,24 @@ def main(args):
         iter_datafile_base = None
 
     peMap = Group(ArrMap)
-    blocks = Array(Block, 2, args=[min_msg_size, max_msg_size], map=peMap)
+    blocks = Array(Block, 2, args=[], map=peMap)
     charm.awaitCreation(blocks)
     msg_size = min_msg_size
+    iter_params = []
 
     while msg_size <= max_msg_size:
         if msg_size <= LOW_ITER_THRESHOLD:
             iter = low_iter
         else:
             iter = high_iter
+        iter_params.append((iter, msg_size))
+        msg_size *= 2
+
+    blocks[0].receive_params(iter_params, awaitable=True).get()
+    for iter, msg_size in iter_params:
         done_future = Future()
         blocks.do_iteration(msg_size, window_size, iter, done_future, iter_datafile_base)
         done_future.get()
-        msg_size *= 2
-
     charm.exit()
 
 
