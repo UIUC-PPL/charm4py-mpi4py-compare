@@ -2,7 +2,7 @@ from charm4py import charm, Chare, Array, coro, Future, Channel, Group
 import time
 import numpy as np
 import sys
-warmup=50
+warmup=60
 groupsize=20
 
 class Ping(Chare):
