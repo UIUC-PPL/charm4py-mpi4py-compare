@@ -2,8 +2,8 @@ from charm4py import charm, Chare, Array, coro, Future, Channel, Group
 import time
 import numpy as np
 import sys
-warmup=60
-groupsize=20
+warmup = 60
+groupsize = 20
 
 class Ping(Chare):
     def __init__(self, print_format):
@@ -95,10 +95,10 @@ class Ping(Chare):
                   "Warmup", "Latency (us)"
                   )
         df = pd.DataFrame(self.iteration_data, columns=header)
-        df['Latency (us)'] /= groupsize
-        df['Latency (us)'] /= 1e9
-        df['Latency (us)'] *= 1e6
-        df['Latency (us)'] /= 2
+        # convert latency from round-trip
+        # groupsize iterations in nanoseconds to
+        # average one-way time per iteration in us
+        df['Latency (us)'] /= (groupsize*1e9*2)/1e6
 
         from datetime import datetime
         now = datetime.now()
