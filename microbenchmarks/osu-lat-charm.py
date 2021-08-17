@@ -3,7 +3,7 @@ import time
 import numpy as np
 import sys
 warmup=50
-groupsize=10
+groupsize=20
 
 class Ping(Chare):
     def __init__(self, print_format):
@@ -25,19 +25,17 @@ class Ping(Chare):
     @coro
     def do_iteration(self, message_size, num_iters, done_future):
         data = np.zeros(message_size, dtype='int8')
-        timing_data = np.zeros((warmup+num_iters) // groupsize, dtype=np.float64)
         partner_idx = int(not self.thisIndex)
         partner = self.thisProxy[partner_idx]
         partner_channel = Channel(self, partner)
 
         tstart = time.perf_counter_ns()
-        tstart_iter = 0
 
         for grouping in range((num_iters + warmup)//groupsize):
-            tstart_iter = time.perf_counter_ns()
-            for inner in range(groupsize):
-                if grouping == warmup//groupsize:
-                    tstart = time.perf_counter_ns()
+            iter_st = time.perf_counter_ns()
+            if grouping == warmup // groupsize:
+                tstart = time.perf_counter_ns()
+            for iter in range(groupsize):
                 if self.am_low_chare:
                     partner_channel.send(data)
                     # If we don't capture this,
@@ -49,17 +47,22 @@ class Ping(Chare):
                 else:
                     d=partner_channel.recv()
                     partner_channel.send(data)
-            tend_iter = time.perf_counter_ns()
-            timing_data[grouping] = ((tend_iter - tstart_iter)/1e9) / groupsize
 
+            iter_e = time.perf_counter_ns()
+            if self.am_low_chare:
+                self.iteration_data[self.completed_iterations] = (message_size,
+                                                                  grouping*groupsize,
+                                                                  num_iters,
+                                                                  warmup,
+                                                                  iter_e - iter_st
+                                                                  )
+                self.completed_iterations += 1
         tend = time.perf_counter_ns()
 
         elapsed_time = tend - tstart
 
         if self.am_low_chare:
-            self.iter_timing.append(timing_data)
             self.display_iteration_data(elapsed_time, num_iters, message_size)
-
         self.reduce(done_future)
 
     def display_iteration_data(self, elapsed_time, num_iters, message_size):
@@ -76,36 +79,34 @@ class Ping(Chare):
                   f'{elapsed_time * 1e6: <20} {bandwidth / 1e6: <20}'
                   )
 
-    def record_timing(self, output_file, iter_info):
-        first_line = '# ' + ' '.join(sys.argv)
+    def receive_params(self, iter_params):
+        msg_iters = [x[0] for x in iter_params]
+        self.total_iterations = sum(msg_iters)
+        self.total_iterations += len(iter_params) * warmup
+        # Message size, group, total iterations, warmup iterations, latency (or time)
+        self.iteration_data = np.ndarray((self.total_iterations//groupsize, 5),
+                                         dtype=np.float64
+                                         )
+        self.completed_iterations = 0
+
+    def write_output(self, filename):
+        import pandas as pd
+        header = ("Message size", "Grouping", "Total Iterations",
+                  "Warmup", "Latency (us)"
+                  )
+        df = pd.DataFrame(self.iteration_data, columns=header)
+        df['Latency (us)'] /= groupsize
+        df['Latency (us)'] /= 1e9
+        df['Latency (us)'] *= 1e6
+        df['Latency (us)'] /= 2
+
         from datetime import datetime
-        from itertools import cycle
         now = datetime.now()
         dt_string = now.strftime("%Y_%m_%d_%H_%M_%S")
-        output_filename = f"{output_file}/{dt_string}_osu_latency_charm.csv"
-        header = "Iteration Group,Message Size,Total Trials,Warmup Trials,Elapsed seconds\n"
-
+        output_filename = f"{dt_string}_{filename}.csv"
         with open(output_filename, 'w') as of:
-            of.write(first_line + '\n')
-            of.write(header)
-
-            for idx, info in enumerate(iter_info):
-                timing = self.iter_timing[idx]
-                message_size, n_trials = info
-                for inner, iter_time in enumerate(timing):
-                    grouping = inner * 10
-                    output = [grouping, message_size,
-                              n_trials, warmup,
-                              iter_time/2
-                              ]
-                    of.write(','.join(map(str, output)) + '\n')
-
-
-
-
-
-
-
+            of.write('# ' + ' '.join(sys.argv) + '\n')
+            df.to_csv(of, index=False)
 
 def main(args):
     if len(args) < 6:
@@ -137,13 +138,15 @@ def main(args):
             iter = low_iter
         else:
             iter = high_iter
-        iter_order.append((msg_size, iter))
+        iter_order.append((iter, msg_size))
+        msg_size *= 2
+
+    pings[0].receive_params(iter_order)
+    for iter, msg_size in iter_order:
         done_future = Future()
         pings.do_iteration(msg_size, iter, done_future)
         done_future.get()
-        msg_size *= 2
-
-    pings[0].record_timing(output_file, iter_order, awaitable=True).get()
+    pings[0].write_output(output_file, awaitable=True).get()
     charm.exit()
 
 
