@@ -8,7 +8,6 @@ import random
 
 output_df = None
 
-RANDOM_SEED = 42
 LOW_ITER_THRESHOLD = 8192
 WARMUP_ITERS = 10
 
@@ -57,6 +56,7 @@ def main():
 
     if rank == 0:
         iteration_data = np.ndarray((total_iterations, 5), dtype=np.float64)
+        print("Process,Msg Size, Iterations, Bandwidth (MB/s)")
     else:
         iteration_data = None
 
