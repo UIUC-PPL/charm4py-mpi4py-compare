@@ -13,22 +13,24 @@ class Cell(Chare):
         rank = self.thisIndex[0]
         my_idx = rank % num_charesx
         my_idy = rank // num_charesx
-        ileftover = L % num_charesx
 
+        icrit = 0
+        jcrit = 0
         width = L // num_charesx
         if width < 2*k:
             if rank == 0:
                 print(f"k-value too large: {k}, must be no greater than: {width//2}")
                 charm.exit()
 
-        if my_idx < ileftover:
+        ileftover = L % num_charesx
+        if rank < ileftover:
             istart = (width+1) * my_idx
             iend = istart + width + 1
         else:
             istart = (width+1) * ileftover + width * (my_idx - ileftover)
             iend = istart + width
 
-            icrit = (width + 1) * ileftover
+        icrit = (width + 1) * ileftover
 
         height = L // num_charesy
         if height < m:
@@ -37,7 +39,7 @@ class Cell(Chare):
                 charm.exit()
 
         jleftover = L % num_charesy
-        if my_idy < jleftover:
+        if rank < jleftover:
             jstart = (height+1) * my_idy
             jend = jstart + height + 1
         else:
@@ -49,7 +51,6 @@ class Cell(Chare):
         if icrit == 0 and jcrit == 0:
             self.find_owner = find_owner_simple
         else:
-            # find_owner = find_owner_general
             self.find_owner = find_owner_general
 
         my_tile = BoundingBox(istart, iend, jstart, jend)
@@ -91,16 +92,19 @@ class Cell(Chare):
         if verbose:
             print(f"Chare {rank} has {num_particles} particles.")
 
-    def finish_initializing(self, particle_counts):
-        n_prefix = sum(particle_counts[0:self.rank])
-        finish_particle_initialization(self.particles, n_prefix)
-        total_particles = sum(particle_counts)
+    def validate(self, values):
+        print("Validation values: ", values, type(values), len(values))
+        total_incorrect, id_checksum, nparts = values
 
-        if self.rank == 0:
-            print(f"Total particles in the simulation: {total_particles}.")
-            self.total_particles = total_particles
-
-        self.reduce(self.thisProxy.run)
+        tp = self.total_particles
+        num_particles_checksum = (tp)*(tp+1) // 2
+        if total_incorrect:
+            print(f"There are {total_incorrect} miscalculated particle locations.")
+        else:
+            if id_checksum != num_particles_checksum:
+                print("Particle checksum incorrect.")
+            else:
+                print("Solution validates.")
 
     @coro
     def run(self):
@@ -151,7 +155,7 @@ class Cell(Chare):
             else:
                 print(f"{rank}: Could not find neighbor owner of particle "
                       f"{p[PARTICLE_ID]} in tile {owner}, "
-                      f" my neighbors are {self.nbr}, particle idx is {idx}, total particles: {len(self.particles)}, particle is {p}"
+                      f" my neighbors are {self.nbr}, particle idx is {p[PARTICLE_ID]}, total particles: {len(self.particles)}, particle is {p}"
                       )
                 sys.exit()
         comp_end = wtime()
@@ -195,6 +199,7 @@ class Cell(Chare):
             if self.rank == 0:
                 sim_elapsed = wtime() - self.sim_start
                 print(f"Sim elapsed: {sim_elapsed}")
+
             n_incorrect = 0
             id_checksum = 0
             for p in self.particles:
@@ -202,7 +207,7 @@ class Cell(Chare):
                 id_checksum += int(p[PARTICLE_ID])
 
             self.reduce(self.thisProxy[0].validate,
-                        [n_incorrect, id_checksum, len(self.particles)],
+                        [n_incorrect, id_checksum],
                         Reducer.sum
                         )
             self.reduce(self.thisProxy[0].aggregate,
@@ -215,9 +220,20 @@ class Cell(Chare):
     def resumeFromSync(self):
         self.timers[self.iter-1][ELAPSED_TIME] = wtime() - self.sim_start
         self.thisProxy[self.thisIndex].run()
+
+    def finish_initializing(self, particle_counts):
+        n_prefix = sum(particle_counts[0:self.rank+1])
+        finish_particle_initialization(self.particles, n_prefix)
+        total_particles = sum(particle_counts)
+
+        if self.rank == 0:
+            print(f"Total particles in the simulation: {total_particles}.")
+            self.total_particles = total_particles
+
+        self.reduce(self.thisProxy.run)
+
     def validate(self, values):
-        print("Validation values: ", values, type(values), len(values))
-        total_incorrect, id_checksum, nparts = values
+        total_incorrect, id_checksum = values
 
         tp = self.total_particles
         num_particles_checksum = (tp)*(tp+1) // 2
@@ -225,7 +241,7 @@ class Cell(Chare):
             print(f"There are {total_incorrect} miscalculated particle locations.")
         else:
             if id_checksum != num_particles_checksum:
-                print("Particle checksum incorrect.")
+                print(f"Particle checksum incorrect. {num_particles_checksum} {id_checksum}")
             else:
                 print("Solution validates.")
 
