@@ -13,7 +13,7 @@ def main():
 
     charm4py_intra_cmd = ['python3',
                           '/home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-lat-charm.py',
-                          '1', '4194304', '64', '1000', '500', '0',
+                          '1', '4194304', '1000', '500', '0',
                           'charm_lat_intrasocket'
                           ]
 
