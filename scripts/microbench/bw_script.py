@@ -8,8 +8,8 @@ def main():
     intra_mpirun = ['--map-by', 'core', '--bind-to', 'core', '--report-bindings']
     inter_mpirun = ['--map-by', 'socket', '--bind-to', 'core', '--report-bindings']
 
-    intra_charmrun = ['+pemap', 'L0,2']
-    inter_charmrun = ['+pemap', 'L0,1']
+    intra_charmrun = ['+pemap', 'L0,2', '+no_isomalloc_sync']
+    inter_charmrun = ['+pemap', 'L0,1', '+no_isomalloc_sync']
 
     charm4py_intra_cmd = ['python3',
                           '/home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py',
@@ -51,30 +51,30 @@ def main():
     inter_mpirun_args = (*mpirun_base, *inter_mpirun)
 
     mpi4py_intra = mpirun.bake(*intra_mpirun_args, *mpi4py_intra_cmd)
-    mpi4py_intra._output_f = open('mpi4py_intrasocket.csv', 'w')
+    mpi4py_intra._output_f = open('mpi4py_intrasocket_bw.csv', 'w')
 
     mpi4py_inter = mpirun.bake(*inter_mpirun_args, *mpi4py_inter_cmd)
-    mpi4py_inter._output_f = open('mpi4py_intersocket.csv', 'w')
+    mpi4py_inter._output_f = open('mpi4py_intersocket_bw.csv', 'w')
 
     mpi_intra = mpirun.bake(*intra_mpirun_args, *mpi_intra_cmd)
-    mpi_intra._output_f = open('mpi_intrasocket.csv', 'w')
+    mpi_intra._output_f = open('mpi_intrasocket_bw.csv', 'w')
 
     mpi_inter = mpirun.bake(*inter_mpirun_args, *mpi_inter_cmd)
-    mpi_inter._output_f = open('mpi_intersocket.csv', 'w')
+    mpi_inter._output_f = open('mpi_intersocket_bw.csv', 'w')
 
     charm_base = srun.bake(*srun_base)
 
     charm4py_intra = charm_base.bake(*charm4py_intra_cmd, *intra_charmrun)
-    charm4py_intra._output_f = open('charm4py_intrasocket.csv', 'w')
+    charm4py_intra._output_f = open('charm4py_intrasocket_bw.csv', 'w')
 
     charm4py_inter = charm_base.bake(*charm4py_inter_cmd, *inter_charmrun)
-    charm4py_inter._output_f = open('charm4py_intersocket.csv', 'w')
+    charm4py_inter._output_f = open('charm4py_intersocket_bw.csv', 'w')
 
     charm_intra = charm_base.bake(*charm_intra_cmd, *intra_charmrun)
-    charm_intra._output_f = open('charm_intrasocket.csv', 'w')
+    charm_intra._output_f = open('charm_intrasocket_bw.csv', 'w')
 
     charm_inter = charm_base.bake(*charm_inter_cmd, *inter_charmrun)
-    charm_inter._output_f = open('charm_intersocket.csv', 'w')
+    charm_inter._output_f = open('charm_intersocket_bw.csv', 'w')
 
 
     cmds = [
