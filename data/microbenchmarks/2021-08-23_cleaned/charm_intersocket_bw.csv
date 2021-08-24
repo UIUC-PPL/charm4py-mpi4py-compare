@@ -1,5 +1,5 @@
+Msg Size, Bandwidth (MB/s)
 # /bin/srun --ntasks=2 /home1/08302/tg876011/charm_bw/bandwidth +pemap L0,1 +no_isomalloc_sync
-Msg size, Bandwidth (MB/s)
 1,1.127
 2,2.262
 4,4.485

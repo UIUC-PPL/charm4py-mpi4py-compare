@@ -1,3 +1,4 @@
+Chare,Msg Size,Iterations, Bandwidth (MB/s)
 # /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_intrasocket +pemap L0,2 +no_isomalloc_sync
 0,1,1000,0.12549882668204485
 0,2,1000,0.2506162011168753
