@@ -1,0 +1,540 @@
+# /bin/srun --ntasks=2 /home1/08302/tg876011/charm_bw/bandwidth +pemap L0,2 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,2
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+# Charm++ GPU Bandwidth Test
+# Message sizes: 1 - 4194304 bytes
+# Window size: 64
+# Iterations: 1000 regular, 100 large
+# Warmup: 10
+# Zerocopy only: false
+Starting regular test...
+Bandwidth for 1 bytes: 1.512 MB/s
+Bandwidth for 2 bytes: 3.081 MB/s
+Bandwidth for 4 bytes: 6.155 MB/s
+Bandwidth for 8 bytes: 12.237 MB/s
+Bandwidth for 16 bytes: 24.691 MB/s
+Bandwidth for 32 bytes: 46.192 MB/s
+Bandwidth for 64 bytes: 91.395 MB/s
+Bandwidth for 128 bytes: 177.342 MB/s
+Bandwidth for 256 bytes: 337.526 MB/s
+Bandwidth for 512 bytes: 579.230 MB/s
+Bandwidth for 1024 bytes: 857.315 MB/s
+Bandwidth for 2048 bytes: 1159.104 MB/s
+Bandwidth for 4096 bytes: 1413.665 MB/s
+Bandwidth for 8192 bytes: 1551.799 MB/s
+Bandwidth for 16384 bytes: 1623.290 MB/s
+Bandwidth for 32768 bytes: 1765.402 MB/s
+Bandwidth for 65536 bytes: 4152.394 MB/s
+Bandwidth for 131072 bytes: 4525.122 MB/s
+Bandwidth for 262144 bytes: 1202.192 MB/s
+Bandwidth for 524288 bytes: 949.797 MB/s
+Bandwidth for 1048576 bytes: 829.549 MB/s
+Bandwidth for 2097152 bytes: 1397.522 MB/s
+Bandwidth for 4194304 bytes: 1259.556 MB/s
+Elapsed: 49.374815 s
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 /home1/08302/tg876011/charm_bw/bandwidth +pemap L0,2 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,2
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+# Charm++ GPU Bandwidth Test
+# Message sizes: 1 - 4194304 bytes
+# Window size: 64
+# Iterations: 1000 regular, 100 large
+# Warmup: 10
+# Zerocopy only: false
+Starting regular test...
+Bandwidth for 1 bytes: 1.518 MB/s
+Bandwidth for 2 bytes: 3.087 MB/s
+Bandwidth for 4 bytes: 6.187 MB/s
+Bandwidth for 8 bytes: 12.239 MB/s
+Bandwidth for 16 bytes: 24.873 MB/s
+Bandwidth for 32 bytes: 46.369 MB/s
+Bandwidth for 64 bytes: 89.602 MB/s
+Bandwidth for 128 bytes: 175.232 MB/s
+Bandwidth for 256 bytes: 342.956 MB/s
+Bandwidth for 512 bytes: 586.160 MB/s
+Bandwidth for 1024 bytes: 874.473 MB/s
+Bandwidth for 2048 bytes: 1166.950 MB/s
+Bandwidth for 4096 bytes: 1394.819 MB/s
+Bandwidth for 8192 bytes: 1580.257 MB/s
+Bandwidth for 16384 bytes: 1688.802 MB/s
+Bandwidth for 32768 bytes: 1838.364 MB/s
+Bandwidth for 65536 bytes: 4411.668 MB/s
+Bandwidth for 131072 bytes: 4502.817 MB/s
+Bandwidth for 262144 bytes: 1147.282 MB/s
+Bandwidth for 524288 bytes: 917.073 MB/s
+Bandwidth for 1048576 bytes: 819.580 MB/s
+Bandwidth for 2097152 bytes: 896.555 MB/s
+Bandwidth for 4194304 bytes: 930.591 MB/s
+Elapsed: 64.000402 s
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 /home1/08302/tg876011/charm_bw/bandwidth +pemap L0,2 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,2
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+# Charm++ GPU Bandwidth Test
+# Message sizes: 1 - 4194304 bytes
+# Window size: 64
+# Iterations: 1000 regular, 100 large
+# Warmup: 10
+# Zerocopy only: false
+Starting regular test...
+Bandwidth for 1 bytes: 1.484 MB/s
+Bandwidth for 2 bytes: 3.007 MB/s
+Bandwidth for 4 bytes: 6.043 MB/s
+Bandwidth for 8 bytes: 12.070 MB/s
+Bandwidth for 16 bytes: 24.128 MB/s
+Bandwidth for 32 bytes: 45.964 MB/s
+Bandwidth for 64 bytes: 87.986 MB/s
+Bandwidth for 128 bytes: 173.057 MB/s
+Bandwidth for 256 bytes: 337.207 MB/s
+Bandwidth for 512 bytes: 566.535 MB/s
+Bandwidth for 1024 bytes: 851.636 MB/s
+Bandwidth for 2048 bytes: 1156.161 MB/s
+Bandwidth for 4096 bytes: 1410.488 MB/s
+Bandwidth for 8192 bytes: 1584.514 MB/s
+Bandwidth for 16384 bytes: 1662.029 MB/s
+Bandwidth for 32768 bytes: 1807.125 MB/s
+Bandwidth for 65536 bytes: 4399.115 MB/s
+Bandwidth for 131072 bytes: 4440.207 MB/s
+Bandwidth for 262144 bytes: 1149.140 MB/s
+Bandwidth for 524288 bytes: 900.948 MB/s
+Bandwidth for 1048576 bytes: 822.616 MB/s
+Bandwidth for 2097152 bytes: 967.898 MB/s
+Bandwidth for 4194304 bytes: 1114.227 MB/s
+Elapsed: 58.108600 s
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 /home1/08302/tg876011/charm_bw/bandwidth +pemap L0,2 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,2
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+# Charm++ GPU Bandwidth Test
+# Message sizes: 1 - 4194304 bytes
+# Window size: 64
+# Iterations: 1000 regular, 100 large
+# Warmup: 10
+# Zerocopy only: false
+Starting regular test...
+Bandwidth for 1 bytes: 1.517 MB/s
+Bandwidth for 2 bytes: 3.096 MB/s
+Bandwidth for 4 bytes: 6.243 MB/s
+Bandwidth for 8 bytes: 12.405 MB/s
+Bandwidth for 16 bytes: 24.928 MB/s
+Bandwidth for 32 bytes: 46.551 MB/s
+Bandwidth for 64 bytes: 90.144 MB/s
+Bandwidth for 128 bytes: 176.476 MB/s
+Bandwidth for 256 bytes: 343.613 MB/s
+Bandwidth for 512 bytes: 592.253 MB/s
+Bandwidth for 1024 bytes: 882.469 MB/s
+Bandwidth for 2048 bytes: 1177.614 MB/s
+Bandwidth for 4096 bytes: 1421.574 MB/s
+Bandwidth for 8192 bytes: 1577.239 MB/s
+Bandwidth for 16384 bytes: 1687.281 MB/s
+Bandwidth for 32768 bytes: 1830.900 MB/s
+Bandwidth for 65536 bytes: 2427.575 MB/s
+Bandwidth for 131072 bytes: 4453.737 MB/s
+Bandwidth for 262144 bytes: 1171.765 MB/s
+Bandwidth for 524288 bytes: 931.214 MB/s
+Bandwidth for 1048576 bytes: 828.231 MB/s
+Bandwidth for 2097152 bytes: 1058.670 MB/s
+Bandwidth for 4194304 bytes: 930.989 MB/s
+Elapsed: 61.847282 s
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 /home1/08302/tg876011/charm_bw/bandwidth +pemap L0,2 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,2
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+# Charm++ GPU Bandwidth Test
+# Message sizes: 1 - 4194304 bytes
+# Window size: 64
+# Iterations: 1000 regular, 100 large
+# Warmup: 10
+# Zerocopy only: false
+Starting regular test...
+Bandwidth for 1 bytes: 1.495 MB/s
+Bandwidth for 2 bytes: 3.027 MB/s
+Bandwidth for 4 bytes: 6.083 MB/s
+Bandwidth for 8 bytes: 12.190 MB/s
+Bandwidth for 16 bytes: 24.440 MB/s
+Bandwidth for 32 bytes: 46.169 MB/s
+Bandwidth for 64 bytes: 89.802 MB/s
+Bandwidth for 128 bytes: 175.800 MB/s
+Bandwidth for 256 bytes: 334.604 MB/s
+Bandwidth for 512 bytes: 564.251 MB/s
+Bandwidth for 1024 bytes: 857.124 MB/s
+Bandwidth for 2048 bytes: 1169.816 MB/s
+Bandwidth for 4096 bytes: 1407.938 MB/s
+Bandwidth for 8192 bytes: 1558.492 MB/s
+Bandwidth for 16384 bytes: 1616.464 MB/s
+Bandwidth for 32768 bytes: 1768.948 MB/s
+Bandwidth for 65536 bytes: 2053.998 MB/s
+Bandwidth for 131072 bytes: 4482.437 MB/s
+Bandwidth for 262144 bytes: 1181.833 MB/s
+Bandwidth for 524288 bytes: 933.259 MB/s
+Bandwidth for 1048576 bytes: 831.597 MB/s
+Bandwidth for 2097152 bytes: 1398.097 MB/s
+Bandwidth for 4194304 bytes: 941.918 MB/s
+Elapsed: 57.419483 s
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 /home1/08302/tg876011/charm_bw/bandwidth +pemap L0,2 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,2
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+# Charm++ GPU Bandwidth Test
+# Message sizes: 1 - 4194304 bytes
+# Window size: 64
+# Iterations: 1000 regular, 100 large
+# Warmup: 10
+# Zerocopy only: false
+Starting regular test...
+Bandwidth for 1 bytes: 1.531 MB/s
+Bandwidth for 2 bytes: 3.106 MB/s
+Bandwidth for 4 bytes: 6.244 MB/s
+Bandwidth for 8 bytes: 12.449 MB/s
+Bandwidth for 16 bytes: 24.899 MB/s
+Bandwidth for 32 bytes: 46.294 MB/s
+Bandwidth for 64 bytes: 89.863 MB/s
+Bandwidth for 128 bytes: 175.464 MB/s
+Bandwidth for 256 bytes: 343.166 MB/s
+Bandwidth for 512 bytes: 585.509 MB/s
+Bandwidth for 1024 bytes: 875.009 MB/s
+Bandwidth for 2048 bytes: 1159.493 MB/s
+Bandwidth for 4096 bytes: 1381.991 MB/s
+Bandwidth for 8192 bytes: 1576.065 MB/s
+Bandwidth for 16384 bytes: 1673.832 MB/s
+Bandwidth for 32768 bytes: 1824.019 MB/s
+Bandwidth for 65536 bytes: 4396.531 MB/s
+Bandwidth for 131072 bytes: 4480.641 MB/s
+Bandwidth for 262144 bytes: 1168.296 MB/s
+Bandwidth for 524288 bytes: 934.013 MB/s
+Bandwidth for 1048576 bytes: 831.650 MB/s
+Bandwidth for 2097152 bytes: 1406.992 MB/s
+Bandwidth for 4194304 bytes: 1403.696 MB/s
+Elapsed: 47.828655 s
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 /home1/08302/tg876011/charm_bw/bandwidth +pemap L0,2 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,2
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+# Charm++ GPU Bandwidth Test
+# Message sizes: 1 - 4194304 bytes
+# Window size: 64
+# Iterations: 1000 regular, 100 large
+# Warmup: 10
+# Zerocopy only: false
+Starting regular test...
+Bandwidth for 1 bytes: 1.509 MB/s
+Bandwidth for 2 bytes: 3.033 MB/s
+Bandwidth for 4 bytes: 6.232 MB/s
+Bandwidth for 8 bytes: 12.231 MB/s
+Bandwidth for 16 bytes: 24.643 MB/s
+Bandwidth for 32 bytes: 46.199 MB/s
+Bandwidth for 64 bytes: 88.978 MB/s
+Bandwidth for 128 bytes: 173.780 MB/s
+Bandwidth for 256 bytes: 340.912 MB/s
+Bandwidth for 512 bytes: 592.840 MB/s
+Bandwidth for 1024 bytes: 885.796 MB/s
+Bandwidth for 2048 bytes: 1178.892 MB/s
+Bandwidth for 4096 bytes: 1424.829 MB/s
+Bandwidth for 8192 bytes: 1579.030 MB/s
+Bandwidth for 16384 bytes: 1687.679 MB/s
+Bandwidth for 32768 bytes: 1834.137 MB/s
+Bandwidth for 65536 bytes: 4338.755 MB/s
+Bandwidth for 131072 bytes: 4496.907 MB/s
+Bandwidth for 262144 bytes: 1124.622 MB/s
+Bandwidth for 524288 bytes: 900.166 MB/s
+Bandwidth for 1048576 bytes: 850.111 MB/s
+Bandwidth for 2097152 bytes: 1173.587 MB/s
+Bandwidth for 4194304 bytes: 930.951 MB/s
+Elapsed: 60.049905 s
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 /home1/08302/tg876011/charm_bw/bandwidth +pemap L0,2 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,2
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+# Charm++ GPU Bandwidth Test
+# Message sizes: 1 - 4194304 bytes
+# Window size: 64
+# Iterations: 1000 regular, 100 large
+# Warmup: 10
+# Zerocopy only: false
+Starting regular test...
+Bandwidth for 1 bytes: 1.479 MB/s
+Bandwidth for 2 bytes: 3.015 MB/s
+Bandwidth for 4 bytes: 6.048 MB/s
+Bandwidth for 8 bytes: 12.054 MB/s
+Bandwidth for 16 bytes: 24.166 MB/s
+Bandwidth for 32 bytes: 46.583 MB/s
+Bandwidth for 64 bytes: 91.676 MB/s
+Bandwidth for 128 bytes: 179.919 MB/s
+Bandwidth for 256 bytes: 346.482 MB/s
+Bandwidth for 512 bytes: 578.869 MB/s
+Bandwidth for 1024 bytes: 876.667 MB/s
+Bandwidth for 2048 bytes: 1177.516 MB/s
+Bandwidth for 4096 bytes: 1401.789 MB/s
+Bandwidth for 8192 bytes: 1531.079 MB/s
+Bandwidth for 16384 bytes: 1706.060 MB/s
+Bandwidth for 32768 bytes: 1835.335 MB/s
+Bandwidth for 65536 bytes: 4368.597 MB/s
+Bandwidth for 131072 bytes: 4702.540 MB/s
+Bandwidth for 262144 bytes: 1241.915 MB/s
+Bandwidth for 524288 bytes: 933.808 MB/s
+Bandwidth for 1048576 bytes: 835.891 MB/s
+Bandwidth for 2097152 bytes: 1411.508 MB/s
+Bandwidth for 4194304 bytes: 931.061 MB/s
+Elapsed: 57.456681 s
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 /home1/08302/tg876011/charm_bw/bandwidth +pemap L0,2 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,2
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+# Charm++ GPU Bandwidth Test
+# Message sizes: 1 - 4194304 bytes
+# Window size: 64
+# Iterations: 1000 regular, 100 large
+# Warmup: 10
+# Zerocopy only: false
+Starting regular test...
+Bandwidth for 1 bytes: 1.531 MB/s
+Bandwidth for 2 bytes: 3.126 MB/s
+Bandwidth for 4 bytes: 6.260 MB/s
+Bandwidth for 8 bytes: 12.498 MB/s
+Bandwidth for 16 bytes: 25.325 MB/s
+Bandwidth for 32 bytes: 47.366 MB/s
+Bandwidth for 64 bytes: 90.345 MB/s
+Bandwidth for 128 bytes: 179.431 MB/s
+Bandwidth for 256 bytes: 324.248 MB/s
+Bandwidth for 512 bytes: 582.346 MB/s
+Bandwidth for 1024 bytes: 873.647 MB/s
+Bandwidth for 2048 bytes: 1166.557 MB/s
+Bandwidth for 4096 bytes: 1417.595 MB/s
+Bandwidth for 8192 bytes: 1560.027 MB/s
+Bandwidth for 16384 bytes: 1637.749 MB/s
+Bandwidth for 32768 bytes: 1781.966 MB/s
+Bandwidth for 65536 bytes: 4328.386 MB/s
+Bandwidth for 131072 bytes: 4538.159 MB/s
+Bandwidth for 262144 bytes: 1200.543 MB/s
+Bandwidth for 524288 bytes: 955.928 MB/s
+Bandwidth for 1048576 bytes: 700.942 MB/s
+Bandwidth for 2097152 bytes: 719.296 MB/s
+Bandwidth for 4194304 bytes: 931.109 MB/s
+Elapsed: 70.003642 s
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 /home1/08302/tg876011/charm_bw/bandwidth +pemap L0,2 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,2
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+# Charm++ GPU Bandwidth Test
+# Message sizes: 1 - 4194304 bytes
+# Window size: 64
+# Iterations: 1000 regular, 100 large
+# Warmup: 10
+# Zerocopy only: false
+Starting regular test...
+Bandwidth for 1 bytes: 1.511 MB/s
+Bandwidth for 2 bytes: 3.061 MB/s
+Bandwidth for 4 bytes: 6.081 MB/s
+Bandwidth for 8 bytes: 12.153 MB/s
+Bandwidth for 16 bytes: 24.657 MB/s
+Bandwidth for 32 bytes: 45.688 MB/s
+Bandwidth for 64 bytes: 90.500 MB/s
+Bandwidth for 128 bytes: 178.578 MB/s
+Bandwidth for 256 bytes: 342.682 MB/s
+Bandwidth for 512 bytes: 572.682 MB/s
+Bandwidth for 1024 bytes: 863.906 MB/s
+Bandwidth for 2048 bytes: 1165.495 MB/s
+Bandwidth for 4096 bytes: 1420.667 MB/s
+Bandwidth for 8192 bytes: 1561.709 MB/s
+Bandwidth for 16384 bytes: 1618.439 MB/s
+Bandwidth for 32768 bytes: 1784.961 MB/s
+Bandwidth for 65536 bytes: 4250.936 MB/s
+Bandwidth for 131072 bytes: 4489.924 MB/s
+Bandwidth for 262144 bytes: 1195.674 MB/s
+Bandwidth for 524288 bytes: 921.645 MB/s
+Bandwidth for 1048576 bytes: 836.733 MB/s
+Bandwidth for 2097152 bytes: 931.004 MB/s
+Bandwidth for 4194304 bytes: 1117.342 MB/s
+Elapsed: 58.485669 s
+[Partition 0][Node 0] End of program

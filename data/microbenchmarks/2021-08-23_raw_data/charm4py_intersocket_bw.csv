@@ -1,0 +1,480 @@
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_intersocket +pemap L0,1 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,1
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.004 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.07521759922213553
+0,2,1000,0.15004800466993473
+0,4,1000,0.3041537498290201
+0,8,1000,0.6041656677163619
+0,16,1000,1.2078387726934097
+0,32,1000,2.420289572326115
+0,64,1000,4.816019236786412
+0,128,1000,9.58045615782165
+0,256,1000,19.176388810845015
+0,512,1000,37.88610376070767
+0,1024,1000,73.89085128281789
+0,2048,1000,145.84871062260194
+0,4096,1000,284.15636253103304
+0,8192,1000,534.9407484453052
+0,16384,100,860.3229782495249
+0,32768,100,1436.5690462173084
+0,65536,100,1823.3293501018982
+0,131072,100,2390.014888542884
+0,262144,100,893.738027469355
+0,524288,100,770.3340361874527
+0,1048576,100,845.9426857688618
+0,2097152,100,830.8921997636492
+0,4194304,100,976.1990297939901
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_intersocket +pemap L0,1 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,1
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.004 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.07309902662788371
+0,2,1000,0.14616508738734632
+0,4,1000,0.3016907333175819
+0,8,1000,0.6018497027289665
+0,16,1000,1.2049910759008784
+0,32,1000,2.3499107297718065
+0,64,1000,4.6772385309804605
+0,128,1000,9.44313198773561
+0,256,1000,19.025577320497153
+0,512,1000,37.51792252675929
+0,1024,1000,73.45392769551493
+0,2048,1000,144.36537803427214
+0,4096,1000,282.577580867477
+0,8192,1000,531.1303209619634
+0,16384,100,866.9443292508565
+0,32768,100,1441.4682657452704
+0,65536,100,1807.4539080133814
+0,131072,100,2578.8289971344543
+0,262144,100,898.4217930737574
+0,524288,100,735.4112201611039
+0,1048576,100,824.4382241443298
+0,2097152,100,762.9529203509384
+0,4194304,100,954.7271391584089
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_intersocket +pemap L0,1 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,1
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.004 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.07339488457213318
+0,2,1000,0.14685462216005424
+0,4,1000,0.29588865975439244
+0,8,1000,0.5893204656733951
+0,16,1000,1.1810288642313866
+0,32,1000,2.3621144992183907
+0,64,1000,4.686077292176806
+0,128,1000,9.367552157624715
+0,256,1000,18.723501276885752
+0,512,1000,36.98663808948433
+0,1024,1000,72.78655109089459
+0,2048,1000,142.81759593432838
+0,4096,1000,273.81964828598075
+0,8192,1000,525.654224774826
+0,16384,100,849.5934894727359
+0,32768,100,1458.0949440079307
+0,65536,100,1782.5901720401903
+0,131072,100,2448.2818970636904
+0,262144,100,893.7613503007165
+0,524288,100,968.1632392816113
+0,1048576,100,906.8607888510272
+0,2097152,100,775.8221189172401
+0,4194304,100,933.3112007273572
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_intersocket +pemap L0,1 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,1
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.004 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.07100054071476886
+0,2,1000,0.13969908588989935
+0,4,1000,0.2837905073165411
+0,8,1000,0.6000831205805109
+0,16,1000,1.2233050393965978
+0,32,1000,2.4362858580850446
+0,64,1000,4.835662172554079
+0,128,1000,9.725541404039008
+0,256,1000,19.377707780813218
+0,512,1000,38.01598616557746
+0,1024,1000,74.50707065889742
+0,2048,1000,146.9729391990348
+0,4096,1000,284.6517635473476
+0,8192,1000,536.862346888648
+0,16384,100,878.6034385654298
+0,32768,100,1471.5148112998388
+0,65536,100,1827.2094758786545
+0,131072,100,2576.3295999312336
+0,262144,100,887.2067407577628
+0,524288,100,744.10638624022
+0,1048576,100,736.5519776436897
+0,2097152,100,713.4584994712527
+0,4194304,100,940.0261854755921
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_intersocket +pemap L0,1 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,1
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.004 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.0754358371731797
+0,2,1000,0.15324229962145397
+0,4,1000,0.3077905924264805
+0,8,1000,0.6157369289367365
+0,16,1000,1.217614501934579
+0,32,1000,2.40123779075985
+0,64,1000,4.77894796098649
+0,128,1000,9.566051539017643
+0,256,1000,19.012987592557266
+0,512,1000,37.53820580966172
+0,1024,1000,74.42020790596169
+0,2048,1000,148.32623420774763
+0,4096,1000,288.8264142000911
+0,8192,1000,541.2075739734144
+0,16384,100,885.8236596954465
+0,32768,100,1485.960263582929
+0,65536,100,1788.9111189035789
+0,131072,100,2458.2764442899975
+0,262144,100,875.3648002094251
+0,524288,100,770.1324602838785
+0,1048576,100,969.5587729987869
+0,2097152,100,1075.8589608631391
+0,4194304,100,1261.5475136320536
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_intersocket +pemap L0,1 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,1
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.004 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.07379165569716145
+0,2,1000,0.14676376135002997
+0,4,1000,0.2971122585422854
+0,8,1000,0.5942360393520508
+0,16,1000,1.1876255827468316
+0,32,1000,2.3709828250968856
+0,64,1000,4.72767868828758
+0,128,1000,9.474356592361715
+0,256,1000,18.90887276251967
+0,512,1000,36.977474228954094
+0,1024,1000,72.92764506722654
+0,2048,1000,142.852294870734
+0,4096,1000,279.3976104936207
+0,8192,1000,523.3968386245497
+0,16384,100,815.8534585060106
+0,32768,100,1446.0598773933057
+0,65536,100,1786.415942810225
+0,131072,100,2579.16903192386
+0,262144,100,859.4008660053054
+0,524288,100,746.0123050737012
+0,1048576,100,842.0023227264459
+0,2097152,100,774.4816401220332
+0,4194304,100,930.1630007925472
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_intersocket +pemap L0,1 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,1
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.004 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.07248068732634418
+0,2,1000,0.14814977701219154
+0,4,1000,0.2991185261440484
+0,8,1000,0.5751068860155845
+0,16,1000,1.154187798307153
+0,32,1000,2.335509806371132
+0,64,1000,4.659702713712446
+0,128,1000,9.296470940962793
+0,256,1000,18.886403796589082
+0,512,1000,37.44928232673115
+0,1024,1000,73.39898164627849
+0,2048,1000,144.2299861725903
+0,4096,1000,283.10926058917386
+0,8192,1000,526.2545361577196
+0,16384,100,865.2599794383532
+0,32768,100,1461.2215649022673
+0,65536,100,1803.6636672447457
+0,131072,100,2492.2070599410217
+0,262144,100,885.4269702978622
+0,524288,100,747.5384862211771
+0,1048576,100,955.6884997148627
+0,2097152,100,658.8080703789213
+0,4194304,100,928.839456259906
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_intersocket +pemap L0,1 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,1
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.004 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.07390768030155734
+0,2,1000,0.15006012623563592
+0,4,1000,0.3037057301708369
+0,8,1000,0.6018575402076326
+0,16,1000,1.2069670139030317
+0,32,1000,2.4118139064421107
+0,64,1000,4.829896210618929
+0,128,1000,9.598104333562112
+0,256,1000,19.27242499274797
+0,512,1000,37.73107632494465
+0,1024,1000,74.17429276154722
+0,2048,1000,146.52940860006152
+0,4096,1000,285.77582659882256
+0,8192,1000,533.064362534801
+0,16384,100,875.6752422591837
+0,32768,100,1466.751916294307
+0,65536,100,1777.8861520783141
+0,131072,100,2576.86741159546
+0,262144,100,891.8297782980704
+0,524288,100,744.7039125362504
+0,1048576,100,731.8205553889077
+0,2097152,100,879.2961075091627
+0,4194304,100,976.8072460112063
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_intersocket +pemap L0,1 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,1
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.004 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.07431297385154827
+0,2,1000,0.15010598079751125
+0,4,1000,0.30440518930237204
+0,8,1000,0.6042864862090389
+0,16,1000,1.2044112728811076
+0,32,1000,2.415648328753575
+0,64,1000,4.826771061147504
+0,128,1000,9.62757233809251
+0,256,1000,19.242841300841476
+0,512,1000,38.11462590016307
+0,1024,1000,74.49113183251085
+0,2048,1000,147.20550973564895
+0,4096,1000,287.0109504030935
+0,8192,1000,534.6164283991625
+0,16384,100,881.8820293353541
+0,32768,100,1494.620992602885
+0,65536,100,1775.539173258293
+0,131072,100,2558.6234228577364
+0,262144,100,898.3739503701823
+0,524288,100,771.4383950408367
+0,1048576,100,1090.6674112963142
+0,2097152,100,784.1426040342012
+0,4194304,100,1002.9369386569244
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_intersocket +pemap L0,1 +no_isomalloc_sync
+Charm++>ofi> provider: psm2
+Charm++>ofi> control progress: 2
+Charm++>ofi> data progress: 2
+Charm++>ofi> maximum inject message size: 64
+Charm++>ofi> eager maximum message size: 65536 (maximum header size: 40)
+Charm++>ofi> cq entries count: 8
+Charm++>ofi> use inject: 1
+Charm++>ofi> maximum rma size: 4294967295
+Charm++>ofi> mr mode: 0x1
+Charm++>ofi> use memory pool: 0
+Charm++>ofi> use request cache: 0
+Charm++>ofi> number of pre-allocated recvs: 8
+Charm++>ofi> exchanging addresses over OFI
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0,1
+Charm++> Running on 1 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.004 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.07401402007249229
+0,2,1000,0.15141800095954838
+0,4,1000,0.30272777116281996
+0,8,1000,0.6049605792686028
+0,16,1000,1.2101499686466062
+0,32,1000,2.4231368786301988
+0,64,1000,4.842937107251232
+0,128,1000,9.638205545969287
+0,256,1000,19.231766592490576
+0,512,1000,37.99712569517879
+0,1024,1000,74.21542204910016
+0,2048,1000,145.95341049908598
+0,4096,1000,286.09658262292623
+0,8192,1000,536.7837688990746
+0,16384,100,877.0299502852146
+0,32768,100,1477.5446033963317
+0,65536,100,1766.3240846531382
+0,131072,100,2535.9845072768226
+0,262144,100,871.4117101554996
+0,524288,100,747.3842857091022
+0,1048576,100,986.7306697422833
+0,2097152,100,734.1582040595814
+0,4194304,100,951.7933630098022
+[Partition 0][Node 0] End of program
