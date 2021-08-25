@@ -147,7 +147,7 @@ class Cell(Chare):
         now = datetime.now()
         dt_string = now.strftime("%Y_%m_%d_%H_%M_%S")
         output_filename = f"{output_filepath}/{dt_string}_n{n}_m{n}_np{np}_i{iterations}_w{warmup}_charm.csv"
-        header = "Process,Iteration,Iteration Time,Communication Time,Computation Time"
+        header = "Process,Num processes,Iteration,Iteration Time,Communication Time,Computation Time"
         with open(output_filename, 'w') as output_file:
             output_file.write(f'#{" ".join(sys.argv)}\n')
             output_file.write(header + '\n')
@@ -157,7 +157,7 @@ class Cell(Chare):
                     comm_time = in_seconds[COMM_TIME]
                     comp_time = in_seconds[COMP_TIME]
                     iter_time = in_seconds[ITER_TIME]
-                    output_tuple = (pnum, inum+1, iter_time, comm_time, comp_time)
+                    output_tuple = (pnum, np, inum+1, iter_time, comm_time, comp_time)
                     output_file.write(','.join(map(str, output_tuple)) + '\n')
         self.reduce(self.done_future)
 
@@ -168,22 +168,22 @@ def main(args):
 
     print('Python Charm/Numpy  Stencil execution on 2D grid')
 
-    if len(sys.argv) < 3:
-        print('argument count = ', len(sys.argv))
+    if len(args) < 3:
+        print('argument count = ', len(args))
         charm.abort("Usage: ./stencil <# chares> <# iterations> "
                     "[<array dimension> or <array dimension X> <array dimension Y>]"
                     )
 
-    np = int(sys.argv[1])
+    np = int(args[1])
     if np < 1:
         charm.abort("ERROR: num_chares must be >= 1")
-    iterations = int(sys.argv[2])
+    iterations = int(args[2])
     if iterations < 1:
         charm.abort("ERROR: iterations must be >= 1")
 
-    n = int(sys.argv[3])
-    if len(sys.argv) > 4:
-        m = int(sys.argv[4])
+    n = int(args[3])
+    if len(args) > 4:
+        m = int(args[4])
     else:
         m = n
 
@@ -220,7 +220,7 @@ def main(args):
     cells.run(done_fut)
     done_fut.get()
     tend = time.perf_counter()
-    print(f"Elapsed: {tend-tstart}")
+    print(f"Elapsed (total): {tend-tstart}")
     charm.exit()
 
 
