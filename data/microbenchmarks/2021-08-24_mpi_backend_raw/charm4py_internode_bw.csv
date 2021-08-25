@@ -1,0 +1,370 @@
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_internode +pemap L0 +no_isomalloc_sync
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: -1 (desired: 0)
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0
+Charm++> Running on 2 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.003 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.12065726321081992
+0,2,1000,0.24424086872418585
+0,4,1000,0.4893276867725826
+0,8,1000,0.9814537286495859
+0,16,1000,1.943206755302067
+0,32,1000,3.9086287642465303
+0,64,1000,7.695036073440214
+0,128,1000,15.519010331151394
+0,256,1000,30.725491255825855
+0,512,1000,61.03749926519844
+0,1024,1000,118.59546343520996
+0,2048,1000,235.29635187432237
+0,4096,1000,458.42033297860337
+0,8192,1000,848.7506770765095
+0,16384,100,1494.4242360067367
+0,32768,100,2489.294324118007
+0,65536,100,2345.788326916755
+0,131072,100,1480.5974656968167
+0,262144,100,1271.294797194983
+0,524288,100,1359.8591884265259
+0,1048576,100,1157.0760574670676
+0,2097152,100,1027.6317464749957
+0,4194304,100,1334.814197255406
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_internode +pemap L0 +no_isomalloc_sync
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: -1 (desired: 0)
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0
+Charm++> Running on 2 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.12196845597670894
+0,2,1000,0.24578024522231146
+0,4,1000,0.4898487691680764
+0,8,1000,0.9889529002018363
+0,16,1000,1.9614886720883176
+0,32,1000,3.937199907705419
+0,64,1000,7.883175851510213
+0,128,1000,15.534390946802462
+0,256,1000,31.047981745306988
+0,512,1000,61.330126292099436
+0,1024,1000,117.7220733594018
+0,2048,1000,234.16541800117963
+0,4096,1000,462.38396249583207
+0,8192,1000,855.7032660405189
+0,16384,100,1495.7695542261265
+0,32768,100,2452.9991186776365
+0,65536,100,2349.9727205539257
+0,131072,100,1429.5739602511796
+0,262144,100,1230.9986896230234
+0,524288,100,1332.665880029119
+0,1048576,100,1035.0395784703512
+0,2097152,100,1117.419398108988
+0,4194304,100,1244.0157991457313
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_internode +pemap L0 +no_isomalloc_sync
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: -1 (desired: 0)
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0
+Charm++> Running on 2 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.11826892547577661
+0,2,1000,0.23187001947959185
+0,4,1000,0.46634978529321774
+0,8,1000,0.949494956733367
+0,16,1000,1.891289277415898
+0,32,1000,3.80530560925775
+0,64,1000,7.603433209251502
+0,128,1000,15.15582309927157
+0,256,1000,30.18588488978188
+0,512,1000,60.22835811712505
+0,1024,1000,116.12603169376733
+0,2048,1000,229.80980245247784
+0,4096,1000,445.8021613273857
+0,8192,1000,830.5081327581088
+0,16384,100,1459.6252340179435
+0,32768,100,2427.5318024536678
+0,65536,100,2306.0127671737137
+0,131072,100,1430.509944206612
+0,262144,100,1247.702015580129
+0,524288,100,1347.948105011447
+0,1048576,100,1052.8690651805887
+0,2097152,100,1188.8736892440156
+0,4194304,100,1306.62230356667
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_internode +pemap L0 +no_isomalloc_sync
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: -1 (desired: 0)
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0
+Charm++> Running on 2 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.1108161074967258
+0,2,1000,0.222418197069739
+0,4,1000,0.4405224419014137
+0,8,1000,0.8841528007798926
+0,16,1000,1.7634409649159504
+0,32,1000,3.554811611092708
+0,64,1000,7.151181325758022
+0,128,1000,14.285160804334266
+0,256,1000,28.495871601267073
+0,512,1000,56.715007083888025
+0,1024,1000,111.07973286349309
+0,2048,1000,219.6194474711279
+0,4096,1000,429.47736327456136
+0,8192,1000,795.826845431513
+0,16384,100,1376.2627438990128
+0,32768,100,2267.0442352590544
+0,65536,100,2249.8073617875752
+0,131072,100,1421.2439325794137
+0,262144,100,1160.7246960782031
+0,524288,100,1319.1398801213215
+0,1048576,100,1154.8509019983662
+0,2097152,100,1108.9810901551166
+0,4194304,100,1335.430831435489
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_internode +pemap L0 +no_isomalloc_sync
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: -1 (desired: 0)
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0
+Charm++> Running on 2 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.12343933330181463
+0,2,1000,0.24954192434841474
+0,4,1000,0.49777795347908715
+0,8,1000,1.0014910990689585
+0,16,1000,2.0089194418083327
+0,32,1000,4.030155536246202
+0,64,1000,7.960551124346813
+0,128,1000,15.899795986965747
+0,256,1000,31.883430648144106
+0,512,1000,63.29674586392505
+0,1024,1000,122.99535866915843
+0,2048,1000,241.6196733801475
+0,4096,1000,471.443316695308
+0,8192,1000,872.4226146064731
+0,16384,100,1508.2265221697714
+0,32768,100,2470.3092387787724
+0,65536,100,2348.058103426502
+0,131072,100,1477.7488730467485
+0,262144,100,1264.9062263535375
+0,524288,100,1353.793734946375
+0,1048576,100,1033.9415597138332
+0,2097152,100,1116.619828793424
+0,4194304,100,1209.5202763563098
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_internode +pemap L0 +no_isomalloc_sync
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: -1 (desired: 0)
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0
+Charm++> Running on 2 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.12411723560361224
+0,2,1000,0.24997130050079833
+0,4,1000,0.4955357205104759
+0,8,1000,0.9871097805760131
+0,16,1000,1.8537064472246725
+0,32,1000,3.7465762219088043
+0,64,1000,7.487453763425835
+0,128,1000,15.035143596543142
+0,256,1000,29.710925052697405
+0,512,1000,58.950584680325875
+0,1024,1000,115.80481231851053
+0,2048,1000,226.83075690050126
+0,4096,1000,447.6102592541598
+0,8192,1000,826.2794063556652
+0,16384,100,1435.3435941085916
+0,32768,100,2362.7787271549487
+0,65536,100,2293.524552692904
+0,131072,100,1397.6467468132219
+0,262144,100,1337.5105666478194
+0,524288,100,1123.8798676461142
+0,1048576,100,1073.3727844805849
+0,2097152,100,1137.1039553961634
+0,4194304,100,1345.0640180599494
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_internode +pemap L0 +no_isomalloc_sync
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: -1 (desired: 0)
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0
+Charm++> Running on 2 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.12208220636374761
+0,2,1000,0.244796264819424
+0,4,1000,0.4896956371003893
+0,8,1000,0.9831380980695303
+0,16,1000,1.9579389789011914
+0,32,1000,3.931691826061233
+0,64,1000,7.870921148721698
+0,128,1000,15.540241657756651
+0,256,1000,31.264963610053666
+0,512,1000,61.678832900783775
+0,1024,1000,119.32541876171526
+0,2048,1000,234.9056840607777
+0,4096,1000,460.3758225253748
+0,8192,1000,847.4860608008996
+0,16384,100,1474.753533603051
+0,32768,100,2062.551437786836
+0,65536,100,2085.533975220494
+0,131072,100,1139.8291259861355
+0,262144,100,1075.8502761460343
+0,524288,100,976.444681012292
+0,1048576,100,1018.1499390815003
+0,2097152,100,1022.8069747014565
+0,4194304,100,1235.3690190459097
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_internode +pemap L0 +no_isomalloc_sync
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: -1 (desired: 0)
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0
+Charm++> Running on 2 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.1227124436804612
+0,2,1000,0.24514203669150705
+0,4,1000,0.48791852306392874
+0,8,1000,0.978791567223415
+0,16,1000,1.9520956493245945
+0,32,1000,3.9139354376425906
+0,64,1000,7.859199261467526
+0,128,1000,15.626121445187344
+0,256,1000,31.01565558323569
+0,512,1000,62.19842741897175
+0,1024,1000,119.92904167344237
+0,2048,1000,234.94291347113756
+0,4096,1000,459.9178489035716
+0,8192,1000,857.463193039161
+0,16384,100,1485.1273523423633
+0,32768,100,2476.5814270249098
+0,65536,100,2340.8670424264646
+0,131072,100,1463.9029373667001
+0,262144,100,1175.4001872765032
+0,524288,100,1317.1654538215794
+0,1048576,100,1159.8091927579098
+0,2097152,100,962.1818286138354
+0,4194304,100,1339.7639613641231
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_internode +pemap L0 +no_isomalloc_sync
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: -1 (desired: 0)
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0
+Charm++> Running on 2 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.12256712785527489
+0,2,1000,0.2464525994217422
+0,4,1000,0.49064343264784327
+0,8,1000,0.9882684293394755
+0,16,1000,1.985741475477183
+0,32,1000,3.984298283063176
+0,64,1000,7.966073390364575
+0,128,1000,15.850915374389526
+0,256,1000,31.44171361921134
+0,512,1000,62.64323557783658
+0,1024,1000,120.53843263534232
+0,2048,1000,238.28356681108426
+0,4096,1000,466.2498161514681
+0,8192,1000,861.4156834451053
+0,16384,100,1487.616941370822
+0,32768,100,2483.4460777124004
+0,65536,100,2352.115861661699
+0,131072,100,1465.848763404496
+0,262144,100,1361.5950023674088
+0,524288,100,1192.183164216333
+0,1048576,100,1150.6986170538717
+0,2097152,100,1022.5155974488576
+0,4194304,100,1253.6995936076228
+[Partition 0][Node 0] End of program
+# /bin/srun --ntasks=2 python3 /home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py 1 4194304 64 1000 100 charm_bw_internode +pemap L0 +no_isomalloc_sync
+Charm++> Running on MPI version: 3.1
+Charm++> level of thread support used: -1 (desired: 0)
+Charm++> Running in non-SMP mode: 2 processes (PEs)
+Converse/Charm++ Commit ID: v7.1.0-devel-29-gdae86b4e1
+Isomalloc> Disabling global synchronization of address space.
+CharmLB> Load balancer assumes all CPUs are same.
+Charm4py> Running Charm4py version 1.0 on Python 3.9.6 (CPython). Using 'cython' interface to access Charm++
+Charm++> cpu affinity enabled. 
+Charm++> cpuaffinity PE-core map (logical indices): 0
+Charm++> Running on 2 hosts (2 sockets x 24 cores x 2 PUs = 96-way SMP)
+Charm++> cpu topology info is gathered in 0.002 seconds.
+Chare,Msg Size, Iterations, Bandwidth (MB/s)
+0,1,1000,0.12293436974904168
+0,2,1000,0.24595117682360362
+0,4,1000,0.49099158256326575
+0,8,1000,0.9810496474004771
+0,16,1000,1.9678110391625119
+0,32,1000,3.9278663731342496
+0,64,1000,7.83711911443301
+0,128,1000,15.586774106050369
+0,256,1000,31.151547126175508
+0,512,1000,62.131853964351265
+0,1024,1000,119.44454626050677
+0,2048,1000,237.26780334054618
+0,4096,1000,462.061619276428
+0,8192,1000,852.8205122841234
+0,16384,100,1503.4315294609896
+0,32768,100,2473.4237240845714
+0,65536,100,2345.222282718463
+0,131072,100,1460.8912990711917
+0,262144,100,1288.2740871172011
+0,524288,100,1364.7204323578371
+0,1048576,100,1182.2538906133182
+0,2097152,100,1057.605723528118
+0,4194304,100,1355.7504103714998
+[Partition 0][Node 0] End of program
