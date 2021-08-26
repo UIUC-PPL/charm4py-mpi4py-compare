@@ -13,6 +13,7 @@ def main():
     mpi_file = f'{basedir}/stencil-mpi.py'
     charm_file = f'{basedir}/stencil-charm.py'
     nprocs = [6,12, 24, 48, 96, 192, 384, 768]
+    #nprocs = [6,12, 24, 48]
     scaling = list(range(1,len(nprocs)+1))
     base_dim = [1536, 1536]
 
@@ -24,14 +25,16 @@ def main():
 
     for trial in range(N_TRIALS):
         cmds = list()
+        current_dim = base_dim.copy()
         for idx, np in enumerate(nprocs):
             if not idx % 2:
-                base_dim[0] *= 2
+                current_dim[0] *= 2
             else:
-                base_dim[1] *= 2
+                current_dim[1] *= 2
             common = [str(N_ITERS),
-                      str(base_dim[0]),
-                      str(base_dim[1])
+                      str(current_dim[0]),
+                      str(current_dim[1]),
+                      'weak_scaling_results'
                       ]
 
             charm_base = ['python3',
@@ -62,7 +65,7 @@ def main():
         for c in cmds:
             tst = time.time()
             print(f"Executing {str(c)}")
-            # c(_out=outfile)
+            c(_out=outfile)
             # print(str(c)
             tend = time.time()
             print(f"Command took {tend-tst}s")
