@@ -187,6 +187,12 @@ def main(args):
     else:
         m = n
 
+    output_filepath = '.'
+    try:
+        arg_int = int(args[-1])
+    except:
+        output_filepath = args[-1]
+
     nsquare = n * m
     x, y = factor(np)
     x, y = int(x), int(y)
@@ -202,7 +208,7 @@ def main(args):
               'np': np, 'iterations': iterations,
               'n': n, 'm': m,
               'warmup':10,
-              'output_filepath': '.'
+              'output_filepath': output_filepath
             }
 
     charm.thisProxy.updateGlobals(params, awaitable=True).get()

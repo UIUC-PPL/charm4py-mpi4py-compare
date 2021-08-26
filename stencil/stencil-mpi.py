@@ -48,6 +48,10 @@ def main():
     x = int(x)
     y = int(y)
     output_filepath = '.'
+    try:
+        arg_int = int(sys.argv[-1])
+    except:
+        output_filepath = sys.argv[-1]
 
     if me == 0:
         print(f"X, y: {x} {y}")
