@@ -26,7 +26,8 @@ def main():
         for np in nprocs:
             common = [str(N_ITERS),
                       str(base_dim[0]),
-                      str(base_dim[1])
+                      str(base_dim[1]),
+                      'strong_scaling_results'
                       ]
 
             charm_base = ['python3',
