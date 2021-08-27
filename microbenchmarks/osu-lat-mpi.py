@@ -3,7 +3,6 @@ import time
 import numpy as np
 import sys
 warmup = 60
-groupsize = 20
 
 def main():
     args = sys.argv
@@ -54,9 +53,6 @@ def main():
         do_iteration(comm, rank, msg_size, iter, iteration_data, basecount)
         basecount += (iter+warmup) // groupsize
 
-    if rank == 0 and output_file:
-        write_output(output_file, iteration_data)
-
     sys.exit()
 
 def do_iteration(comm, rank, message_size, num_iters, iter_data, basecount):
@@ -66,35 +62,23 @@ def do_iteration(comm, rank, message_size, num_iters, iter_data, basecount):
     am_low = rank == 0
 
     tstart = time.perf_counter_ns()
-    for grouping in range((num_iters + warmup)//groupsize):
-        iter_st = time.perf_counter_ns()
-        for iter in range(groupsize):
-            if grouping == warmup // groupsize:
-                comm.barrier()
-                iter_st = time.perf_counter_ns()
-                tstart = time.perf_counter_ns()
-            if rank == 0:
-                comm.Send(data, dest=partner, tag=0)
-                comm.Recv(data_recv, source=partner, tag=1)
-            else:
-                comm.Recv(data_recv, source=partner, tag=0)
-                comm.Send(data, dest=partner, tag=1)
-        iter_e = time.perf_counter_ns()
-        if am_low:
-            iter_data[grouping+basecount] = (message_size,
-                                             grouping*groupsize,
-                                             num_iters,
-                                             warmup,
-                                             iter_e - iter_st
-                                             )
+    for i in range(num_iters + warmup):
+        if i == warmup:
+            comm.barrier()
+            iter_st = time.perf_counter_ns()
+            tstart = time.perf_counter_ns()
+        if rank == 0:
+            comm.Send(data, dest=partner, tag=0)
+            comm.Recv(data_recv, source=partner, tag=1)
+        else:
+            comm.Recv(data_recv, source=partner, tag=0)
+            comm.Send(data, dest=partner, tag=1)
 
     tend = time.perf_counter_ns()
     elapsed_time = tend - tstart
 
     if rank == 0:
         display_iteration_data(elapsed_time, num_iters, message_size)
-
-
 
 def display_iteration_data(elapsed_time, num_iters, message_size):
     elapsed_time /= 2  # 1-way performance, not RTT

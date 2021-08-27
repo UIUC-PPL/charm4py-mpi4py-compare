@@ -3,7 +3,6 @@ import time
 import numpy as np
 import sys
 warmup = 60
-groupsize = 20
 
 class Ping(Chare):
     def __init__(self, print_format):
@@ -31,32 +30,20 @@ class Ping(Chare):
 
         tstart = time.perf_counter_ns()
 
-        for grouping in range((num_iters + warmup)//groupsize):
-            iter_st = time.perf_counter_ns()
-            if grouping == warmup // groupsize:
+        for i in range(num_iters + warmup):
+            if i == warmup:
                 tstart = time.perf_counter_ns()
-            for iter in range(groupsize):
-                if self.am_low_chare:
-                    partner_channel.send(data)
-                    # If we don't capture this,
-                    # we are timing extra deallocation costs
-                    # for large messages, it makes a
-                    # massive difference
-                    d=partner_channel.recv()
-
-                else:
-                    d=partner_channel.recv()
-                    partner_channel.send(data)
-
-            iter_e = time.perf_counter_ns()
             if self.am_low_chare:
-                self.iteration_data[self.completed_iterations] = (message_size,
-                                                                  grouping*groupsize,
-                                                                  num_iters,
-                                                                  warmup,
-                                                                  iter_e - iter_st
-                                                                  )
-                self.completed_iterations += 1
+                partner_channel.send(data)
+                # If we don't capture this,
+                # we are timing extra deallocation costs
+                # for large messages, it makes a
+                # massive difference
+                d=partner_channel.recv()
+
+            else:
+                d=partner_channel.recv()
+                partner_channel.send(data)
         tend = time.perf_counter_ns()
 
         elapsed_time = tend - tstart
@@ -146,7 +133,6 @@ def main(args):
         done_future = Future()
         pings.do_iteration(msg_size, iter, done_future)
         done_future.get()
-    pings[0].write_output(output_file, awaitable=True).get()
     charm.exit()
 
 
