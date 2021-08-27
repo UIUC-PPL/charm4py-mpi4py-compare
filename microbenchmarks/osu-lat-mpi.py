@@ -43,19 +43,12 @@ def main():
         iter_order.append((iter, msg_size))
         msg_size *= 2
 
-    # Message size, group, total iterations, warmup iterations, latency (or time)
-    iteration_data = np.ndarray((total_iters//groupsize, 5),
-                                dtype=np.float64
-                                )
 
-    basecount = 0
     for iter, msg_size in iter_order:
-        do_iteration(comm, rank, msg_size, iter, iteration_data, basecount)
-        basecount += (iter+warmup) // groupsize
-
+        do_iteration(comm, rank, msg_size, iter)
     sys.exit()
 
-def do_iteration(comm, rank, message_size, num_iters, iter_data, basecount):
+def do_iteration(comm, rank, message_size, num_iters):
     data = np.zeros(message_size, dtype='int8')
     data_recv = np.zeros(message_size, dtype='int8')
     partner = not rank

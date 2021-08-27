@@ -66,16 +66,6 @@ class Ping(Chare):
                   f'{elapsed_time * 1e6: <20} {bandwidth / 1e6: <20}'
                   )
 
-    def receive_params(self, iter_params):
-        msg_iters = [x[0] for x in iter_params]
-        self.total_iterations = sum(msg_iters)
-        self.total_iterations += len(iter_params) * warmup
-        # Message size, group, total iterations, warmup iterations, latency (or time)
-        self.iteration_data = np.ndarray((self.total_iterations//groupsize, 5),
-                                         dtype=np.float64
-                                         )
-        self.completed_iterations = 0
-
     def write_output(self, filename):
         import pandas as pd
         header = ("Message size", "Grouping", "Total Iterations",
@@ -128,7 +118,6 @@ def main(args):
         iter_order.append((iter, msg_size))
         msg_size *= 2
 
-    pings[0].receive_params(iter_order)
     for iter, msg_size in iter_order:
         done_future = Future()
         pings.do_iteration(msg_size, iter, done_future)
