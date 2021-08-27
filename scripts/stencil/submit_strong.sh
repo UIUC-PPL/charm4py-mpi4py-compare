@@ -2,7 +2,7 @@
 #SBATCH --nodes=128
 #SBATCH -J jacobi2d_strong
 #SBATCH --tasks-per-node=48
-#SBATCH --time=0:55:00
+#SBATCH --time=1:35:00
 #SBATCH --partition=skx-normal
 
 source ~/.bashrc
