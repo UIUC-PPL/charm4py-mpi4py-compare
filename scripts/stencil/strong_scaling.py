@@ -3,7 +3,7 @@ import sys
 import random
 import time
 
-N_TRIALS = 5
+N_TRIALS = 10
 N_ITERS = 100
 def main():
     # mpirun -np 12 python3 stencil-mpi.py 100 24576 24576
@@ -12,10 +12,10 @@ def main():
     basedir = '/home1/08302/tg876011/charm-mpi-compare/stencil'
     mpi_file = f'{basedir}/stencil-mpi.py'
     charm_file = f'{basedir}/stencil-charm.py'
-    nprocs = [6,12, 24, 48, 96, 192, 384, 768]
+    nprocs = [6,12, 24, 48, 96, 192, 384, 768,1536,3072,6144]
     base_dim = (24576, 24576)
 
-    # 5 trials
+    # 10 trials
     # in each trial, go through each of n procs and run a command for charm, mpi
     # 5 * 7 * 2 = 70 commands
     mpirun = sh.mpirun
