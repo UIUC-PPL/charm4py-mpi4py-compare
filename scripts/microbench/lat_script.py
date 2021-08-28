@@ -2,11 +2,13 @@ import sh
 import sys
 import random
 import time
+import os
 
 
 def main():
-    intra_mpirun = ['--map-by', 'core', '--bind-to', 'core', '--report-bindings']
-    inter_mpirun = ['--map-by', 'socket', '--bind-to', 'core', '--report-bindings']
+    os.putenv('I_MPI_EAGER_THRESHOLD','8192')
+    intra_mpirun = ['--map-by', 'core', '--bind-to', 'core' ]
+    inter_mpirun = ['--map-by', 'socket', '--bind-to', 'core']
 
     intra_charmrun = ['+pemap', 'L0,2', '+no_isomalloc_sync']
     inter_charmrun = ['+pemap', 'L0,1', '+no_isomalloc_sync']
@@ -31,11 +33,11 @@ def main():
                         '/home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-lat-mpi.py',
                         '1', '4194304', '1000', '500', '0'
                         ]
-    mpi_inter_cmd = ['/home1/08302/tg876011/osu-micro-benchmarks/mpi/pt2pt']
-    mpi_intra_cmd = ['/home1/08302/tg876011/osu-micro-benchmarks/mpi/pt2pt']
+    mpi_inter_cmd = ['/home1/08302/tg876011/osu-micro-benchmarks/mpi/pt2pt/osu_latency']
+    mpi_intra_cmd = ['/home1/08302/tg876011/osu-micro-benchmarks/mpi/pt2pt/osu_latency']
 
-    charm_inter_cmd = ['/home1/08302/tg876011/charm_lat']
-    charm_intra_cmd = ['/home1/08302/tg876011/charm_lat']
+    charm_inter_cmd = ['/home1/08302/tg876011/charm_lat/latency']
+    charm_intra_cmd = ['/home1/08302/tg876011/charm_lat/latency']
 
     mpirun_base = ['-np', '2']
 
@@ -50,16 +52,16 @@ def main():
     mpi4py_inter = mpirun.bake(*inter_mpirun_args, *mpi4py_inter_cmd)
     mpi4py_inter._output_f = open('mpi4py_intersocket_lat.csv', 'w')
 
-    charm4py_intra = charm_base.bake(*charm4py_intra_cmd, *intra_charmrun)
+    charm4py_intra = mpirun.bake(*charm4py_intra_cmd, *intra_charmrun)
     charm4py_intra._output_f = open('charm4py_intrasocket_lat.csv', 'w')
 
-    charm4py_inter = charm_base.bake(*charm4py_inter_cmd, *inter_charmrun)
+    charm4py_inter = mpirun.bake(*charm4py_inter_cmd, *inter_charmrun)
     charm4py_inter._output_f = open('charm4py_intersocket_lat.csv', 'w')
 
-    charm_inter = charm_base.bake(*charm_inter_cmd, *inter_charmrun)
+    charm_inter = mpirun.bake(*charm_inter_cmd, *inter_charmrun)
     charm_inter._output_f = open('charm_intersocket_lat.csv', 'w')
 
-    charm_intra = charm_base.bake(*charm_intra_cmd, *intra_charmrun)
+    charm_intra = mpirun.bake(*charm_intra_cmd, *intra_charmrun)
     charm_intra._output_f = open('charm_intrasocket_lat.csv', 'w')
 
     mpi_inter = mpirun.bake(*inter_mpirun_args, *mpi_inter_cmd)

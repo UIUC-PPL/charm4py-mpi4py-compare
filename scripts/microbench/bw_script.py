@@ -2,11 +2,13 @@ import sh
 import sys
 import random
 import time
+import os
 
 
 def main():
-    intra_mpirun = ['--map-by', 'core', '--bind-to', 'core', '--report-bindings']
-    inter_mpirun = ['--map-by', 'socket', '--bind-to', 'core', '--report-bindings']
+    os.putenv('I_MPI_EAGER_THRESHOLD','8192')
+    intra_mpirun = ['--map-by', 'core', '--bind-to', 'core']
+    inter_mpirun = ['--map-by', 'socket', '--bind-to', 'core']
 
     intra_charmrun = ['+pemap', 'L0,2', '+no_isomalloc_sync']
     inter_charmrun = ['+pemap', 'L0,1', '+no_isomalloc_sync']
@@ -42,10 +44,10 @@ def main():
     mpi_inter_cmd = ['/home1/08302/tg876011/osu-micro-benchmarks/mpi/pt2pt/osu_bw']
 
     mpirun_base = ['-np','2']
-    srun_base = ['--ntasks=2']
+    srun_base = ['-np','2']
 
     mpirun = sh.Command('mpirun')
-    srun = sh.Command('srun')
+    srun = sh.Command('mpirun')
 
     intra_mpirun_args = (*mpirun_base, *intra_mpirun)
     inter_mpirun_args = (*mpirun_base, *inter_mpirun)
