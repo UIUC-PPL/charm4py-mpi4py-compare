@@ -1,7 +1,9 @@
+import mpi4py.rc; mpi4py.rc.threads = False
 from mpi4py import MPI
 import time
 import numpy as np
 import sys
+from numba import cuda
 warmup = 60
 
 def main():
@@ -49,6 +51,7 @@ def main():
     sys.exit()
 
 def do_iteration(comm, rank, message_size, num_iters):
+    cuda.select_device(rank)
     data_h = np.zeros(message_size, dtype='int8')
     data = cuda.device_array_like(data_h)
     data_recv = cuda.device_array_like(data_h)
