@@ -89,8 +89,9 @@ def write_output(filename_base, iteration_data, windows):
 
 
 def do_iteration(comm, rank, message_size, windows, num_iters, iter_data=None):
-    local_data = np.ones(message_size, dtype='int8')
-    remote_data = np.ones(message_size, dtype='int8')
+    local_data_h = np.ones(message_size, dtype='int8')
+    local_data = cuda.array_like(local_data_h)
+    remote_data = cuda.array_like(local_data_h)
     ack = np.zeros(1, dtype='int8')
 
     partner_idx = not rank

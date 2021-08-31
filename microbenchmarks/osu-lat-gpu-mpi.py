@@ -49,8 +49,9 @@ def main():
     sys.exit()
 
 def do_iteration(comm, rank, message_size, num_iters):
-    data = np.zeros(message_size, dtype='int8')
-    data_recv = np.zeros(message_size, dtype='int8')
+    data_h = np.zeros(message_size, dtype='int8')
+    data = cuda.device_array_like(data_h)
+    data_recv = cuda.device_array_like(data_h)
     partner = not rank
     am_low = rank == 0
 
