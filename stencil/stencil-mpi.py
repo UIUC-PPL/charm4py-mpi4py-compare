@@ -136,44 +136,51 @@ def main():
 
         iter_start = time.perf_counter_ns()
         comm_start = iter_start
+        send_reqs = list()
+        recv_reqs = list()
+        recv_status = MPI.Status()
         if Y < y-1 :
-            req0 = comm.Irecv(top_buf_in, source =top_nbr , tag =101 )
+            req0 = comm.Irecv(top_buf_in, source =top_nbr , tag =101)
             kernels.pack_top(T, top_buf_out)
             req1 = comm.Isend(top_buf_out, dest =top_nbr, tag =99)
+            recv_reqs.append(req0)
+            send_reqs.append(req1)
 
         if Y > 0 :
-            req2 = comm.Irecv(bot_buf_in, source =bot_nbr , tag =99 )
+            req2 = comm.Irecv(bot_buf_in, source =bot_nbr , tag =99)
             kernels.pack_bottom(T, bot_buf_out)
             req3 = comm.Isend(bot_buf_out, dest =bot_nbr, tag =101)
+            recv_reqs.append(req2)
+            send_reqs.append(req3)
 
         if X < x-1 :
             req4 = comm.Irecv(right_buf_in, source =right_nbr , tag =1010)
             kernels.pack_right(T, right_buf_out)
             req5 = comm.Isend(right_buf_out, dest =right_nbr, tag =990)
+            recv_reqs.append(req4)
+            send_reqs.append(req5)
 
         if X > 0 :
-            req6 = comm.Irecv(left_buf_in, source =left_nbr , tag =990 )
+            req6 = comm.Irecv(left_buf_in, source =left_nbr , tag =990)
             kernels.pack_left(T, left_buf_out)
             req7 = comm.Isend(left_buf_out, dest =left_nbr, tag =1010)
+            recv_reqs.append(req6)
+            send_reqs.append(req7)
 
-        if Y < y-1 :
-            req0.wait()
-            req1.wait()
-            kernels.unpack_top(T, top_buf_in)
-        if Y > 0 :
-            req2.wait()
-            req3.wait()
-            kernels.unpack_bottom(T, bot_buf_in)
-        if X > 0 :
-            req6.wait()
-            req7.wait()
-            kernels.unpack_left(T, left_buf_in)
+        for _ in recv_reqs:
+            MPI.Request.Waitany(recv_reqs, status=recv_status)
+            tag = recv_status.Get_tag()
+            if tag == 101:
+                kernels.unpack_top(T, top_buf_in)
+            elif tag == 99:
+                kernels.unpack_bottom(T, bot_buf_in)
+            elif tag == 1010:
+                kernels.unpack_left(T, left_buf_in)
+            elif tag == 990:
+                kernels.unpack_right(T, right_buf_in)
 
-        if X < x-1 :
-            req4.wait()
-            req5.wait()
-            kernels.unpack_right(T, right_buf_in)
 
+        MPI.Request.Waitall(send_reqs)
         comm_end = time.perf_counter_ns()
         comp_start = comm_end
 
