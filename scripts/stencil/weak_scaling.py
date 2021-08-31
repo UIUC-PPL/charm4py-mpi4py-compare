@@ -15,7 +15,7 @@ def main():
     nprocs = [6,12, 24, 48, 96, 192, 384, 768, 1536, 3072, 6144]
     #nprocs = [6,12, 24, 48]
     scaling = list(range(1,len(nprocs)+1))
-    base_dim = [1536, 1536]
+    base_dim = [24576, 24576]
 
     # 5 trials
     # in each trial, go through each of n procs and run a command for charm, mpi
