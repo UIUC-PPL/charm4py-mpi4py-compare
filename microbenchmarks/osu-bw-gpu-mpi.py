@@ -1,3 +1,4 @@
+import mpi4py.rc; mpi4py.rc.threads = False
 from mpi4py import MPI
 import time
 import numpy as np
@@ -63,7 +64,7 @@ def main():
 
     for iter, msg_size in iter_params:
         do_iteration(comm, rank, msg_size, windows, iter, iteration_data)
-    if rank == 0:
+    if False and rank == 0:
         write_output(iter_datafile_base, iteration_data, windows)
     sys.exit(0)
 
@@ -89,9 +90,10 @@ def write_output(filename_base, iteration_data, windows):
 
 
 def do_iteration(comm, rank, message_size, windows, num_iters, iter_data=None):
+    cuda.select_device(rank)
     local_data_h = np.ones(message_size, dtype='int8')
-    local_data = cuda.array_like(local_data_h)
-    remote_data = cuda.array_like(local_data_h)
+    local_data = cuda.device_array_like(local_data_h)
+    remote_data = cuda.device_array_like(local_data_h)
     ack = np.zeros(1, dtype='int8')
 
     partner_idx = not rank
