@@ -115,6 +115,7 @@ class Cell(Chare):
 
         iter = self.iter
         if iter < 2:
+            self.allreduce().get()
             self.sim_start = wtime()
         iter_start = wtime()
         comp_start = iter_start
@@ -196,6 +197,7 @@ class Cell(Chare):
         if self.iter < iterations + 1:
             self.run()
         else:
+            self.allreduce().get()
             if self.rank == 0:
                 sim_elapsed = wtime() - self.sim_start
                 print(f"Sim elapsed: {sim_elapsed}")
@@ -210,11 +212,12 @@ class Cell(Chare):
                         [n_incorrect, id_checksum],
                         Reducer.sum
                         )
-            self.reduce(self.thisProxy[0].aggregate,
-                        self.timers,
-                        Reducer.gather
-                        )
-            if self.rank != 0:
+            if output:
+                self.reduce(self.thisProxy[0].aggregate,
+				self.timers,
+				Reducer.gather
+			   )
+            if output is None or self.rank != 0:
                 self.reduce(self.done_future)
 
     def resumeFromSync(self):
@@ -227,7 +230,6 @@ class Cell(Chare):
         total_particles = sum(particle_counts)
 
         if self.rank == 0:
-            print(f"Total particles in the simulation: {total_particles}.")
             self.total_particles = total_particles
 
         self.reduce(self.thisProxy.run)

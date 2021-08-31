@@ -105,8 +105,6 @@ def main():
             if proc == rank:
                 print(f"Processor {rank} has {num_particles} particles.")
     total_particles = comm.reduce(num_particles, op=MPI.SUM, root=0)
-    if rank == 0:
-        print(f"Total particles in the simulation: {total_particles}.")
 
     send_counts = np.ndarray((8, 1), dtype=np.int32)
     recv_counts = np.ndarray((8, 1), dtype=np.int32)
@@ -217,6 +215,7 @@ def main():
         num_particles = len(particles)
         if rank == 0 and sim_params.verbose:
             print(f"Iteration {iter} complete in {iter_end - iter_start}s.")
+    comm.barrier()
     sim_end = wtime()
     sim_elapsed = sim_end - sim_start
     if rank == 0:
