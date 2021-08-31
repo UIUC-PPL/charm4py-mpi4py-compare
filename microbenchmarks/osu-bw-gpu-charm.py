@@ -48,7 +48,7 @@ class Block(Chare):
 
         if self.gpu_direct:
             d_local_data_addr = array.array('L', [0])
-            d_local_data_size = array.array('L', [0])
+            d_local_data_size = array.array('i', [0])
 
             d_local_data_addr[0] = d_local_data.__cuda_array_interface__['data'][0]
             d_local_data_size[0] = d_local_data.nbytes
@@ -74,8 +74,8 @@ class Block(Chare):
                         partner_channel.send(h_local_data)
                 else:
                     for _ in range(windows):
-                        partner_channel.send(gpu_src_ptrs = d_local_data_addr,
-                                             gpu_src_sizes = d_local_data_size
+                        partner_channel.send(src_ptrs = d_local_data_addr,
+                                             src_sizes = d_local_data_size
                                              )
 
                 partner_ack_channel.recv()
@@ -90,8 +90,8 @@ class Block(Chare):
                         # d_local_data.copy_to_device(received)
                 else:
                     for _ in range(windows):
-                        partner_channel.recv(post_buf_addresses = d_local_data_addr,
-                                             post_buf_sizes = d_local_data_size)
+                        partner_channel.recv(post_addresses = d_local_data_addr,
+                                             post_sizes = d_local_data_size)
                 partner_ack_channel.send(1)
 
         tend = time.time()
