@@ -43,7 +43,7 @@ def _pack_bottom(temperature, ghost):
           ghost[y] = temperature[index(BLOCK_HEIGHT-1, y+1)]
 
 def pack_left(temperature, ghost, stream=cuda.default_stream()):
-    block_dim = (TILE_SIZE, TILE_SIZE)
+    block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_HEIGHT+(block_dim[0]-1))//block_dim[0], 1)
     _pack_left[grid_dim, block_dim, stream](temperature, ghost)
 
