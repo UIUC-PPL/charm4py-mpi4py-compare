@@ -3,6 +3,13 @@ BLOCK_WIDTH = 0
 BLOCK_HEIGHT = 0
 DIVIDEBY5 = 0.2
 
+def set_block_params(width, height):
+    global BLOCK_WIDTH
+    global BLOCK_HEIGHT
+
+    BLOCK_WIDTH = width
+    BLOCK_HEIGHT = height
+
 @cuda.jit
 def index(x, y):
     return x*BLOCK_WIDTH + y
