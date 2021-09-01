@@ -2,6 +2,7 @@ from numba import cuda
 BLOCK_WIDTH = 0
 BLOCK_HEIGHT = 0
 DIVIDEBY5 = 0.2
+TILE_SIZE = 16
 
 def set_block_params(width, height):
     global BLOCK_WIDTH
@@ -16,31 +17,35 @@ def index(x, y):
 
 
 @cuda.jit
-def pack_left(temperature, ghost):
+def _pack_left(temperature, ghost):
     x = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
     if x < BLOCK_HEIGHT:
           ghost[x] = temperature[index(x+1, 0)]
 
 @cuda.jit
-def pack_right(temperature, ghost):
+def _pack_right(temperature, ghost):
     x = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
     if x < BLOCK_HEIGHT:
           ghost[x] = temperature[index(x+1, BLOCK_WIDTH-1)]
 
 
 @cuda.jit
-def pack_top(temperature, ghost):
+def _pack_top(temperature, ghost):
     y = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
     if y < BLOCK_WIDTH:
           ghost[y] = temperature[index(0, y+1)]
 
 
 @cuda.jit
-def pack_bottom(temperature, ghost):
+def _pack_bottom(temperature, ghost):
     y = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
     if y < BLOCK_WIDTH:
           ghost[y] = temperature[index(BLOCK_HEIGHT-1, y+1)]
 
+def pack_left(temperature, ghost, stream=cuda.default_stream()):
+    block_dim = (TILE_SIZE, TILE_SIZE)
+    grid_dim = ((BLOCK_HEIGHT+(block_dim[0]-1))//block_dim[0], 1)
+    _pack_left[grid_dim, block_dim, stream](temperature, ghost)
 
 # @cuda.jit
 # def unpack_left(temperature, ghost):
