@@ -11,7 +11,7 @@ def set_block_params(width, height):
     BLOCK_WIDTH = width
     BLOCK_HEIGHT = height
 
-@cuda.jit
+@cuda.jit(device=True)
 def index(x, y):
     return x*BLOCK_WIDTH + y
 
