@@ -10,10 +10,10 @@ def main():
     output_base = '/gpfs/alpine/scratch/zanef2/csc357'
     hostname = sys.argv[1]
     hostnames = hostname.split(',')
-    os.putenv('UCX_RNDV_THRESH', '524288')
+    os.putenv('UCX_RNDV_THRESH', '8192')
     os.putenv('UCX_MEMTYPE_CACHE', 'n')
     mpirun_args = ['-H', f'{hostnames[0]}:1,{hostnames[1]}:1', '-x', 'PATH', '-x', 'LD_LIBRARY_PATH',
-                   '-x', 'UCX_RNDV_THRESH=131072', '-x', 'UCX_MEMTYPE_CACHE=n',
+                   '-x', 'UCX_RNDV_THRESH=8192', '-x', 'UCX_MEMTYPE_CACHE=n',
                    ]
 
     charm_args = ['+ppn', '1', '+pemap', 'L0']
@@ -43,7 +43,7 @@ def main():
     charm_cmd = ['/ccs/home/zanef2/charm_bw/bandwidth']
 
     mpirun_base = ['-np', '2']
-    jsrun_base = ['-n2', '-a1', '-c1', '-g1', '-K2', '-r2', '--smpiargs="-disable_gpu_hooks"']
+    jsrun_base = ['-n2', '-a1', '-c1', '-g1', '-K2', '-r1', '--smpiargs="-disable_gpu_hooks"']
 
     mpirun = sh.Command('mpirun')
     jsrun = sh.Command('jsrun')
