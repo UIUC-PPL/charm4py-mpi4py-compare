@@ -3,87 +3,75 @@ import sys
 import random
 import time
 import os
+import sys
 
 
 def main():
-    os.putenv('I_MPI_EAGER_THRESHOLD','8192')
-    intra_mpirun = ['--map-by', 'core', '--bind-to', 'core']
-    inter_mpirun = ['--map-by', 'socket', '--bind-to', 'core']
+    output_base = '/gpfs/alpine/scratch/zanef2/csc357'
+    hostname = sys.argv[1]
+    os.putenv('UCX_RNDV_THRESH', '131072')
+    os.putenv('UCX_MEMTYPE_CACHE', 'n')
+    mpirun_args = ['-H', f'{hostname}:2', '-x', 'PATH', '-x', 'LD_LIBRARY_PATH',
+                   '-x', 'UCX_RNDV_THRESH=131072', '-x', 'UCX_MEMTYPE_CACHE=n',
+                   ]
 
-    intra_charmrun = ['+pemap', 'L0,2', '+no_isomalloc_sync']
-    inter_charmrun = ['+pemap', 'L0,1', '+no_isomalloc_sync']
+    charm_args = ['+ppn', '1', '+pemap', 'L0,4']
 
-    charm4py_intra_cmd = ['python3',
-                          '/home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py',
-                          '1', '4194304', '64', '1000', '100',
-                          'charm_bw_intrasocket'
+    # UCX_RNDV_THRESH=131072 UCX_MEMTYPE_CACHE=n jsrun -n2 -a1 -c2 -g1 -K2 -r2 --smpiargs="-disable_gpu_hooks" python3 $PWD/osu-bw-gpu-charm.py +ppn 1 +pemap L0,4 $((1<<10)) $((1<<23)) 1000 100 0 1
+    charm4py_cmd_small = ['python3',
+                          '/ccs/home/zanef2/charm-mpi-compare/microbenchmarks/osu-bw-gpu-charm.py',
+                          '1', '1024', '64', '1000', '500', '1'
+                          ]
+    charm4py_cmd_large = ['python3',
+                          '/ccs/home/zanef2/charm-mpi-compare/microbenchmarks/osu-bw-gpu-charm.py',
+                          '2048', '4194304', '64', '1000', '500', '1'
                           ]
 
-    # On stampede Core 1 is on NUMA node 1
-    charm4py_inter_cmd = ['python3',
-                          '/home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-charm.py',
-                          '1', '4194304', '64', '1000', '100',
-                          'charm_bw_intersocket'
+
+    mpi4py_cmd_small = ['python3',
+                        '/ccs/home/zanef2/charm-mpi-compare/microbenchmarks/osu-bw-gpu-mpi.py',
+                        '1', '1024', '64', '1000', '500'
+                          ]
+    mpi4py_cmd_large = ['python3',
+                        '/ccs/home/zanef2/charm-mpi-compare/microbenchmarks/osu-bw-gpu-mpi.py',
+                        '2048', '4194304', '64', '1000', '500'
                           ]
 
-    charm_intra_cmd = ['/home1/08302/tg876011/charm_bw/bandwidth']
-    charm_inter_cmd = ['/home1/08302/tg876011/charm_bw/bandwidth']
+    mpi_cmd = ['/ccs/home/zanef2/osu-micro-benchmarks-5.8/build/install/libexec/osu-micro-benchmarks/mpi/pt2pt/osu_bw', 'D', 'D'
+               ]
+    charm_cmd = ['/ccs/home/zanef2/charm_bw/bandwidth']
 
-    mpi4py_intra_cmd = ['python3',
-                        '/home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-mpi.py',
-                        '1', '4194304', '64', '1000', '100',
-                        'mpi_bw_intrasocket'
-                        ]
-    mpi4py_inter_cmd = ['python3',
-                        '/home1/08302/tg876011/charm-mpi-compare/microbenchmarks/osu-bw-mpi.py',
-                        '1', '4194304', '64', '1000', '100',
-                        'mpi_bw_intersocket'
-                        ]
-
-    mpi_intra_cmd = ['/home1/08302/tg876011/osu-micro-benchmarks/mpi/pt2pt/osu_bw']
-    mpi_inter_cmd = ['/home1/08302/tg876011/osu-micro-benchmarks/mpi/pt2pt/osu_bw']
-
-    mpirun_base = ['-np','2']
-    srun_base = ['-np','2']
+    mpirun_base = ['-np', '2']
+    jsrun_base = ['-n2', '-a1', '-c1', '-g1', '-K2', '-r2', '--smpiargs="-disable_gpu_hooks"']
 
     mpirun = sh.Command('mpirun')
-    srun = sh.Command('mpirun')
+    jsrun = sh.Command('jsrun')
+    jsrun = jsrun.bake(*jsrun_base)
 
-    intra_mpirun_args = (*mpirun_base, *intra_mpirun)
-    inter_mpirun_args = (*mpirun_base, *inter_mpirun)
+    mpirun_args = (*mpirun_base, *mpirun_args)
 
-    mpi4py_intra = mpirun.bake(*intra_mpirun_args, *mpi4py_intra_cmd)
-    mpi4py_intra._output_f = open('mpi4py_intrasocket_bw.csv', 'w')
+    mpi4py_small = mpirun.bake(*mpirun_args, *mpi4py_cmd_small)
+    mpi4py_large = mpirun.bake(*mpirun_args, *mpi4py_cmd_large)
+    mpi4py_small._output_f = open(f'{output_base}/mpi4py_intranode_gpu_bw.csv', 'w')
+    mpi4py_large._output_f = mpi4py_small._output_f
 
-    mpi4py_inter = mpirun.bake(*inter_mpirun_args, *mpi4py_inter_cmd)
-    mpi4py_inter._output_f = open('mpi4py_intersocket_bw.csv', 'w')
+    charm4py_small = jsrun.bake(*charm4py_cmd_small, *charm_args)
+    charm4py_large = jsrun.bake(*charm4py_cmd_large, *charm_args)
+    charm4py_small._output_f = open(f'{output_base}/charm4py_intranode_gpu_bw.csv', 'w')
+    charm4py_large._output_f = charm4py_small._output_f
 
-    mpi_intra = mpirun.bake(*intra_mpirun_args, *mpi_intra_cmd)
-    mpi_intra._output_f = open('mpi_intrasocket_bw.csv', 'w')
+    charm_intra = jsrun.bake(*charm_cmd, *charm_args)
+    charm_intra._output_f = open(f'{output_base}/charm_intranode_gpu_bw.csv', 'w')
 
-    mpi_inter = mpirun.bake(*inter_mpirun_args, *mpi_inter_cmd)
-    mpi_inter._output_f = open('mpi_intersocket_bw.csv', 'w')
-
-    charm_base = srun.bake(*srun_base)
-
-    charm4py_intra = charm_base.bake(*charm4py_intra_cmd, *intra_charmrun)
-    charm4py_intra._output_f = open('charm4py_intrasocket_bw.csv', 'w')
-
-    charm4py_inter = charm_base.bake(*charm4py_inter_cmd, *inter_charmrun)
-    charm4py_inter._output_f = open('charm4py_intersocket_bw.csv', 'w')
-
-    charm_intra = charm_base.bake(*charm_intra_cmd, *intra_charmrun)
-    charm_intra._output_f = open('charm_intrasocket_bw.csv', 'w')
-
-    charm_inter = charm_base.bake(*charm_inter_cmd, *inter_charmrun)
-    charm_inter._output_f = open('charm_intersocket_bw.csv', 'w')
+    mpi_intra = mpirun.bake(*mpirun_args, *mpi_cmd)
+    mpi_intra._output_f = open(f'{output_base}/mpi_intranode_gpu_bw.csv', 'w')
 
 
     cmds = [
-        mpi4py_intra, mpi4py_inter,
-        mpi_intra, mpi_inter,
-        charm4py_inter, charm4py_intra,
-        charm_inter, charm_intra
+        mpi4py_small, mpi4py_large,
+        charm4py_small, charm4py_large,
+        charm_intra,
+        mpi_intra
     ]
 
     for i in range(10):
