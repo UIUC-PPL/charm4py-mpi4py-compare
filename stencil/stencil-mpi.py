@@ -174,9 +174,9 @@ def main():
                 kernels.unpack_top(T, top_buf_in)
             elif tag == 99:
                 kernels.unpack_bottom(T, bot_buf_in)
-            elif tag == 1010:
-                kernels.unpack_left(T, left_buf_in)
             elif tag == 990:
+                kernels.unpack_left(T, left_buf_in)
+            elif tag == 1010:
                 kernels.unpack_right(T, right_buf_in)
 
 
