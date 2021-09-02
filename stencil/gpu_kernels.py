@@ -14,62 +14,63 @@ def set_block_params(width, height):
 
 @cuda.jit(device=True)
 def index(x, y):
-    return x*BLOCK_WIDTH + y
+    return x*(2+BLOCK_WIDTH) + y
 
 
 @cuda.jit
 def _pack_left(temperature, ghost):
     x = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
     if x < BLOCK_HEIGHT:
-          ghost[x] = temperature[index(x+1, 0)]
+          ghost[x] = temperature[index(x+1, 1)]
 
 
 @cuda.jit
 def _pack_right(temperature, ghost):
     x = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
     if x < BLOCK_HEIGHT:
-          ghost[x] = temperature[index(x+1, BLOCK_WIDTH-1)]
+          ghost[x] = temperature[index(x+1, BLOCK_WIDTH)]
 
 
 @cuda.jit
 def _pack_top(temperature, ghost):
     y = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
     if y < BLOCK_WIDTH:
-          ghost[y] = temperature[index(0, y+1)]
+          ghost[y] = temperature[index(1, y+1)]
 
 
 @cuda.jit
 def _pack_bottom(temperature, ghost):
     y = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
     if y < BLOCK_WIDTH:
-          ghost[y] = temperature[index(BLOCK_HEIGHT-1, y+1)]
+          ghost[y] = temperature[index(BLOCK_HEIGHT, y+1)]
+
 
 
 @cuda.jit
 def _unpack_left(temperature, ghost):
     x = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
-    if x < BLOCK_HEIGHT-2:
+    if x < BLOCK_HEIGHT:
         temperature[index(x+1, 0)] = ghost[x]
 
 @cuda.jit
 def _unpack_right(temperature, ghost):
     x = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
-    if x < BLOCK_HEIGHT-2:
-        temperature[index(x+1, BLOCK_WIDTH-1)] = ghost[x]
+    if x < BLOCK_HEIGHT:
+        temperature[index(x+1, BLOCK_WIDTH+1)] = ghost[x]
 
 
 @cuda.jit
 def _unpack_top(temperature, ghost):
     y = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
-    if y < BLOCK_WIDTH-2:
+    if y < BLOCK_WIDTH:
           temperature[index(0, y+1)] = ghost[y]
 
 
 @cuda.jit
 def _unpack_bottom(temperature, ghost):
     y = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
-    if y < BLOCK_WIDTH-2:
-        temperature[index(BLOCK_HEIGHT-1, y+1)] = ghost[y]
+    if y < BLOCK_WIDTH:
+        temperature[index(BLOCK_HEIGHT+1, y+1)] = ghost[y]
 
 
 def pack_left(temperature, ghost, stream=cuda.default_stream()):
