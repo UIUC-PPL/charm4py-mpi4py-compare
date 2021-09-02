@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
+import mpi4py.rc; mpi4py.rc.threads = False
 import sys
 from mpi4py import MPI
 import numpy
-import gpu_kernels as kernels
 import time
 from numba import cuda
 
@@ -41,7 +41,8 @@ def main():
     me = comm.Get_rank() #My ID
     np = comm.Get_size() #Number of processor, NOT numpy
     ngpus = len(cuda.gpus)
-    cuda.set_device(me % ngpus)
+    cuda.select_device(me%ngpus)
+    import gpu_kernels as kernels
     x, y = factor(np)
     comm = comm.Create_cart([x,y])
     coords = comm.Get_coords(me)
@@ -112,7 +113,7 @@ def main():
     top_buf_out = cuda.to_device(top_buf_out_h)
     top_buf_in = cuda.to_device(top_buf_in_h)
     bot_buf_out = cuda.to_device(bot_buf_out_h)
-    pot_buf_in = cuda.to_device(pot_buf_in_h)
+    bot_buf_in = cuda.to_device(bot_buf_in_h)
 
     right_buf_out_h = numpy.zeros(height)
     right_buf_in_h = numpy.zeros(height)
