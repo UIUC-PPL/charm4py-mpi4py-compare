@@ -173,11 +173,11 @@ def enforce_bc_bottom(temperature, stream=cuda.default_stream()):
     grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0], 1)
     _enforce_bc_bottom[grid_dim, block_dim, stream](temperature)
 
-def enforce_bc(temperature, stream=cuda.default_stream()):
+def enforce_BC(temperature, stream=cuda.default_stream()):
     enforce_bc_left(temperature, stream=stream)
     enforce_bc_top(temperature, stream=stream)
 
-def jacobi_kernel(temperature, new_temperature, stream=cuda.default_stream()):
+def compute(new_temperature, temperature, stream=cuda.default_stream()):
     block_dim = (TILE_SIZE, TILE_SIZE)
     grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0],
                 (BLOCK_HEIGHT+(block_dim[1]-1))//block_dim[1]
