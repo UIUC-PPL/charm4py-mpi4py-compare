@@ -37,6 +37,8 @@ class Cell(Chare):
         self.T = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
         self.newT = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
 
+        width, height = self.width, self.height
+
         top_buf_out_h = numpy.zeros(width)
         top_buf_in_h = numpy.zeros(width)
         bot_buf_out_h = numpy.zeros(width)
