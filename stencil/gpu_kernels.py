@@ -16,6 +16,29 @@ def set_block_params(width, height):
 def index(x, y):
     return x*(2+BLOCK_WIDTH) + y
 
+@cuda.jit
+def _enforce_bc_left(temperature):
+  x = cuda.blockDim.x * cuda.blockIdx.x + cuda.threadIdx.x
+  if x < BLOCK_HEIGHT:
+    temperature[index(x+1, 0)] = 1
+
+@cuda.jit
+def _enforce_bc_right(temperature):
+  x = cuda.blockDim.x * cuda.blockIdx.x + cuda.threadIdx.x
+  if x < BLOCK_HEIGHT:
+      temperature[index(x+1, BLOCK_WIDTH+1)] = 1
+
+@cuda.jit
+def _enforce_bc_top(temperature):
+    y = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
+    if y < BLOCK_WIDTH:
+          temperature[index(0, y+1)] = 1
+
+@cuda.jit
+def _enforce_bc_bottom(temperature):
+    y = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
+    if y < BLOCK_WIDTH:
+        temperature[index(BLOCK_HEIGHT+1, y+1)] = 1
 
 @cuda.jit
 def _pack_left(temperature, ghost):
@@ -115,3 +138,28 @@ def unpack_bottom(temperature, ghost, stream=cuda.default_stream()):
     _unpack_bottom[grid_dim, block_dim, stream](temperature, ghost)
 
 
+def enforce_bc_left(temperature, stream=cuda.default_stream()):
+    block_dim = (TILE_SIZE, 1)
+    grid_dim = ((BLOCK_HEIGHT+(block_dim[0]-1))//block_dim[0], 1)
+    _enforce_bc_left[grid_dim, block_dim, stream](temperature)
+
+def enforce_bc_right(temperature, stream=cuda.default_stream()):
+    block_dim = (TILE_SIZE, 1)
+    grid_dim = ((BLOCK_HEIGHT+(block_dim[0]-1))//block_dim[0], 1)
+    _enforce_bc_right[grid_dim, block_dim, stream](temperature)
+
+def enforce_bc_top(temperature, stream=cuda.default_stream()):
+    block_dim = (TILE_SIZE, 1)
+    grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0], 1)
+    _enforce_bc_top[grid_dim, block_dim, stream](temperature)
+
+def enforce_bc_bottom(temperature, stream=cuda.default_stream()):
+    block_dim = (TILE_SIZE, 1)
+    grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0], 1)
+    _enforce_bc_bottom[grid_dim, block_dim, stream](temperature)
+
+def enforce_bc(temperature, stream=cuda.default_stream()):
+    enforce_bc_left(temperature, stream=stream)
+    enforce_bc_right(temperature, stream=stream)
+    enforce_bc_top(temperature, stream=stream)
+    enforce_bc_bottom(temperature, stream=stream)
