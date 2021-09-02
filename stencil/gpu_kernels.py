@@ -17,6 +17,21 @@ def index(x, y):
     return x*(2+BLOCK_WIDTH) + y
 
 @cuda.jit
+def _jacobi_kernel(temperature, new_temperature):
+    x = (cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x)+1
+    y = (cuda.blockDim.y*cuda.blockIdx.y+cuda.threadIdx.y)+1
+
+    if (x <= BLOCK_WIDTH and y <= BLOCK_HEIGHT):
+        new_temperature[index(x,y)] = \
+              (temperature[index(x,y)] +
+               temperature[index(x-1,y)] +
+               temperature[index(x+1,y)] +
+               temperature[index(x,y-1)] +
+               temperature[index(x,y+1)] +
+               DIVIDEBY5
+               )
+
+@cuda.jit
 def _enforce_bc_left(temperature):
   x = cuda.blockDim.x * cuda.blockIdx.x + cuda.threadIdx.x
   if x < BLOCK_HEIGHT:
@@ -161,3 +176,13 @@ def enforce_bc_bottom(temperature, stream=cuda.default_stream()):
 def enforce_bc(temperature, stream=cuda.default_stream()):
     enforce_bc_left(temperature, stream=stream)
     enforce_bc_top(temperature, stream=stream)
+
+def jacobi_kernel(temperature, new_temperature, stream=cuda.default_stream()):
+    block_dim = (TILE_SIZE, TILE_SIZE)
+    grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0],
+                (BLOCK_HEIGHT+(block_dim[1]-1))//block_dim[1]
+                )
+
+    _jacobi_kernel[grid_dim, block_dim, stream](temperature,
+                                                new_temperature,
+                                                )
