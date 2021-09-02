@@ -48,27 +48,27 @@ def _pack_bottom(temperature, ghost):
 @cuda.jit
 def _unpack_left(temperature, ghost):
     x = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
-    if x < BLOCK_HEIGHT:
+    if x < BLOCK_HEIGHT-2:
         temperature[index(x+1, 0)] = ghost[x]
 
 @cuda.jit
 def _unpack_right(temperature, ghost):
     x = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
-    if x < BLOCK_HEIGHT:
+    if x < BLOCK_HEIGHT-2:
         temperature[index(x+1, BLOCK_WIDTH-1)] = ghost[x]
 
 
 @cuda.jit
 def _unpack_top(temperature, ghost):
     y = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
-    if y < BLOCK_WIDTH:
+    if y < BLOCK_WIDTH-2:
           temperature[index(0, y+1)] = ghost[y]
 
 
 @cuda.jit
 def _unpack_bottom(temperature, ghost):
     y = cuda.blockDim.x*cuda.blockIdx.x+cuda.threadIdx.x
-    if y < BLOCK_WIDTH:
+    if y < BLOCK_WIDTH-2:
         temperature[index(BLOCK_HEIGHT-1, y+1)] = ghost[y]
 
 
