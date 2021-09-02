@@ -160,6 +160,4 @@ def enforce_bc_bottom(temperature, stream=cuda.default_stream()):
 
 def enforce_bc(temperature, stream=cuda.default_stream()):
     enforce_bc_left(temperature, stream=stream)
-    enforce_bc_right(temperature, stream=stream)
     enforce_bc_top(temperature, stream=stream)
-    enforce_bc_bottom(temperature, stream=stream)
