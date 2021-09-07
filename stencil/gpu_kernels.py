@@ -3,6 +3,7 @@ BLOCK_WIDTH = 0
 BLOCK_HEIGHT = 0
 DIVIDEBY5 = 0.2
 TILE_SIZE = 16
+DEFAULT_STREAM = cuda.default_stream()
 
 def set_block_params(width, height):
     global BLOCK_WIDTH
@@ -111,78 +112,87 @@ def _unpack_bottom(temperature, ghost):
         temperature[index(BLOCK_HEIGHT+1, y+1)] = ghost[y]
 
 
-def pack_left(temperature, ghost, stream=cuda.default_stream()):
+def pack_left(temperature, ghost, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_HEIGHT+(block_dim[0]-1))//block_dim[0], 1)
     _pack_left[grid_dim, block_dim, stream](temperature, ghost)
+    stream.synchronize()
 
-def pack_right(temperature, ghost, stream=cuda.default_stream()):
+def pack_right(temperature, ghost, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_HEIGHT+(block_dim[0]-1))//block_dim[0], 1)
     _pack_right[grid_dim, block_dim, stream](temperature, ghost)
+    stream.synchronize()
 
-def pack_top(temperature, ghost, stream=cuda.default_stream()):
+def pack_top(temperature, ghost, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0], 1)
     _pack_top[grid_dim, block_dim, stream](temperature, ghost)
+    stream.synchronize()
 
-def pack_bottom(temperature, ghost, stream=cuda.default_stream()):
+def pack_bottom(temperature, ghost, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0], 1)
     _pack_bottom[grid_dim, block_dim, stream](temperature, ghost)
+    stream.synchronize()
 
 
-def unpack_left(temperature, ghost, stream=cuda.default_stream()):
+def unpack_left(temperature, ghost, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_HEIGHT+(block_dim[0]-1))//block_dim[0], 1)
     _unpack_left[grid_dim, block_dim, stream](temperature, ghost)
+    stream.synchronize()
 
-def unpack_right(temperature, ghost, stream=cuda.default_stream()):
+def unpack_right(temperature, ghost, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_HEIGHT+(block_dim[0]-1))//block_dim[0], 1)
     _unpack_right[grid_dim, block_dim, stream](temperature, ghost)
+    stream.synchronize()
 
-def unpack_top(temperature, ghost, stream=cuda.default_stream()):
+def unpack_top(temperature, ghost, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0], 1)
     _unpack_top[grid_dim, block_dim, stream](temperature, ghost)
+    stream.synchronize()
 
-def unpack_bottom(temperature, ghost, stream=cuda.default_stream()):
+def unpack_bottom(temperature, ghost, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0], 1)
     _unpack_bottom[grid_dim, block_dim, stream](temperature, ghost)
+    stream.synchronize()
 
 
-def enforce_bc_left(temperature, stream=cuda.default_stream()):
+def enforce_bc_left(temperature, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_HEIGHT+(block_dim[0]-1))//block_dim[0], 1)
     _enforce_bc_left[grid_dim, block_dim, stream](temperature)
 
-def enforce_bc_right(temperature, stream=cuda.default_stream()):
+def enforce_bc_right(temperature, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_HEIGHT+(block_dim[0]-1))//block_dim[0], 1)
     _enforce_bc_right[grid_dim, block_dim, stream](temperature)
 
-def enforce_bc_top(temperature, stream=cuda.default_stream()):
+def enforce_bc_top(temperature, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0], 1)
     _enforce_bc_top[grid_dim, block_dim, stream](temperature)
 
-def enforce_bc_bottom(temperature, stream=cuda.default_stream()):
+def enforce_bc_bottom(temperature, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, 1)
     grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0], 1)
     _enforce_bc_bottom[grid_dim, block_dim, stream](temperature)
 
-def enforce_BC(temperature, stream=cuda.default_stream()):
+def enforce_BC(temperature, stream=DEFAULT_STREAM):
     enforce_bc_left(temperature, stream=stream)
     enforce_bc_top(temperature, stream=stream)
+    stream.synchronize()
 
-def compute(new_temperature, temperature, stream=cuda.default_stream()):
+def compute(new_temperature, temperature, stream=DEFAULT_STREAM):
     block_dim = (TILE_SIZE, TILE_SIZE)
     grid_dim = ((BLOCK_WIDTH+(block_dim[0]-1))//block_dim[0],
                 (BLOCK_HEIGHT+(block_dim[1]-1))//block_dim[1]
                 )
-
     _jacobi_kernel[grid_dim, block_dim, stream](temperature,
                                                 new_temperature,
                                                 )
+    stream.synchronize()
