@@ -34,9 +34,9 @@ class Cell(Chare):
 
         self.width = m//y
         self.height = n//x
-
-        self.T = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
-        self.newT = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
+        t_template = numpy.zeros(my_blocksize + ghost_size, dtype=numpy.float64)
+        self.T = cuda.device_array_like(t_template)
+        self.newT = cuda.device_array_like(t_template)
 
         width, height = self.width, self.height
 
@@ -176,6 +176,7 @@ class Cell(Chare):
             comp_start = comm_end
 
             # Apply the stencil operator
+            #for _ in range(10):
             kernels.compute(self.newT, self.T)
             self.newT, self.T = self.T, self.newT
             kernels.enforce_BC(self.T)

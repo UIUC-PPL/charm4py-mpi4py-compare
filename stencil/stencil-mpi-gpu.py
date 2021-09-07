@@ -100,8 +100,9 @@ def main():
     width = m//y
     height = n//x
 
-    T = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
-    newT = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
+    t_template = numpy.zeros(my_blocksize + ghost_size, dtype=numpy.float64)
+    T = cuda.device_array_like(t_template)
+    newT = cuda.device_array_like(t_template)
 
     kernels.enforce_BC(T)
 
