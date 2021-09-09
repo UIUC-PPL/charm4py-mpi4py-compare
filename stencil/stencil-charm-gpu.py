@@ -80,7 +80,7 @@ class Cell(Chare):
 
             address_in = get_address(self.top_buf_in)
             address_out = get_address(self.top_buf_out)
-            size = len(self.top_buf_in)
+            size = self.top_buf_in.nbytes
             top_nbr.dev_addr_out = array('L', [address_out])
             top_nbr.dev_size_out = array('i', [size])
 
@@ -96,7 +96,7 @@ class Cell(Chare):
             bot_nbr.dir = Directions.BOTTOM
             address_in = get_address(self.bot_buf_in)
             address_out = get_address(self.bot_buf_out)
-            size = len(self.bot_buf_in)
+            size = self.bot_buf_in.nbytes
             bot_nbr.dev_addr_out = array('L', [address_out])
             bot_nbr.dev_size_out = array('i', [size])
 
@@ -113,7 +113,7 @@ class Cell(Chare):
 
             address_in = get_address(self.left_buf_in)
             address_out = get_address(self.left_buf_out)
-            size = len(self.left_buf_in)
+            size = self.left_buf_in.nbytes
             left_nbr.dev_addr_out = array('L', [address_out])
             left_nbr.dev_size_out = array('i', [size])
 
@@ -130,7 +130,7 @@ class Cell(Chare):
 
             address_in = get_address(self.right_buf_in)
             address_out = get_address(self.right_buf_out)
-            size = len(self.right_buf_in)
+            size = self.right_buf_in.nbytes
 
             right_nbr.dev_addr_out = array('L', [address_out])
             right_nbr.dev_size_out = array('i', [size])
