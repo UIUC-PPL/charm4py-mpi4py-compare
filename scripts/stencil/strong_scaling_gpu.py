@@ -23,7 +23,7 @@ def main():
     mpirun_static = ['-x', 'PATH', '-x', 'LD_LIBRARY_PATH', '-x', 'UCX_MEMTYPE_CACHE=n', '-H', ','.join(nodelist)]
     charm_suffix = ['+pemap', 'L0,4,8,84,88,92']
 
-    node_counts = [2, 4, 8, 16, 32, 64, 128, 256]
+    node_counts = [1, 2, 4, 8, 16, 32, 64, 128, 256]
     basedim = ['73728', '73728']
     niters = '100'
     outdir = '/gpfs/alpine/scratch/zanef2/csc357/2021-09-09_gpu_scaling/strong_scaling'
