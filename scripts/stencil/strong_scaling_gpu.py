@@ -6,10 +6,10 @@ N_TRIALS = 10
 
 def get_nodelist():
     nodes = os.environ.get('LSB_HOSTS').split()[1::]
-    nodes = set(nodes)
+    nodes = list(set(nodes))
     for i, n in enumerate(nodes):
         nodes[i] = n + ':6'
-    return nodes
+    return set(nodes)
 
 def main():
     # UCX_MEMTYPE_CACHE=n jsrun -n6 -a1 -c1 -g1 -K3 -r6 --smpiargs="-disable_gpu_hooks" python3 stencil-charm-gpu.py 6 100 76668 76668 /gpfs/alpine/scratch/zanef2/csc357/ +pemap L0,4,8,84,88,92
@@ -24,7 +24,7 @@ def main():
     charm_suffix = ['+pemap', 'L0,4,8,84,88,92']
 
     node_counts = [2, 4, 8, 16, 32, 64, 128, 256]
-    basedim = ['76668', '76668']
+    basedim = ['73728', '73728']
     niters = '100'
     outdir = '/gpfs/alpine/scratch/zanef2/csc357/2021-09-09_gpu_scaling/strong_scaling'
     common_prefix = ['UCX_MEMTYPE_CACHE=n']
@@ -41,14 +41,15 @@ def main():
         for c in node_counts:
             nprocs = c * 6
             mpi_cmd = mpirun.bake()
-            charm_cmd = jsrun.bake('python3', 'stencil-charm-gpu.py',
+            charm_cmd = jsrun.bake(f'-n{str(nprocs)}',
+                                   'python3', '/ccs/home/zanef2/charm-mpi-compare/stencil/stencil-charm-gpu.py',
                                    str(nprocs), niters,
                                    *basedim,
                                    outdir,
                                    *charm_suffix
                                    )
-            mpi_cmd = mpirun.bake('-np ', str(nprocs),
-                                  'python3', 'stencil-mpi-gpu.py',
+            mpi_cmd = mpirun.bake('-np', str(nprocs),
+                                  'python3', '/ccs/home/zanef2/charm-mpi-compare/stencil/stencil-mpi-gpu.py',
                                   niters, *basedim,
                                   outdir
                                   )
