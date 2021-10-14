@@ -7,6 +7,7 @@ from charm4py import *
 import numpy as np
 import sys
 
+
 class Cell(Chare):
     def __init__(self, done_future):
         self.done_future = done_future
@@ -23,7 +24,7 @@ class Cell(Chare):
                 charm.exit()
 
         ileftover = L % num_charesx
-        if rank < ileftover:
+        if my_idx < ileftover:
             istart = (width+1) * my_idx
             iend = istart + width + 1
         else:
@@ -39,7 +40,7 @@ class Cell(Chare):
                 charm.exit()
 
         jleftover = L % num_charesy
-        if rank < jleftover:
+        if my_idy < jleftover:
             jstart = (height+1) * my_idy
             jend = jstart + height + 1
         else:
@@ -231,6 +232,7 @@ class Cell(Chare):
 
         if self.rank == 0:
             self.total_particles = total_particles
+            print(f"Total particles in the simulation: {total_particles}")
 
         self.reduce(self.thisProxy.run)
 

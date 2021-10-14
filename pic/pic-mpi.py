@@ -49,7 +49,7 @@ def main():
         sys.exit()
 
     ileftover = L % num_procsx
-    if rank < ileftover:
+    if my_idx < ileftover:
         istart = (width+1) * my_idx
         iend = istart + width + 1
     else:
@@ -65,7 +65,7 @@ def main():
         sys.exit()
 
     jleftover = L % num_procsy
-    if rank < jleftover:
+    if my_idy < jleftover:
         jstart = (height+1) * my_idy
         jend = jstart + height + 1
     else:
