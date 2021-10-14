@@ -87,7 +87,6 @@ class Cell(Chare):
                                   self.thisProxy[nbr_idx]
                                   ) for nbr_idx in self.nbr
                           ]
-        self.timers = np.ndarray((iterations+1, 6), dtype=np.float64)
         self.reduce(self.thisProxy.finish_initializing, num_particles, Reducer.gather)
         self.iter = 0
         if verbose:
@@ -109,7 +108,6 @@ class Cell(Chare):
 
     @coro
     def run(self):
-        # total time, compute time, communicate time, start particles, end particles
         rank = self.rank
         icrit, jcrit = self.crit
         ileftover, jleftover = self.leftover
@@ -118,8 +116,6 @@ class Cell(Chare):
         if iter < 2:
             self.allreduce().get()
             self.sim_start = wtime()
-        iter_start = wtime()
-        comp_start = iter_start
         start_particles = len(self.particles)
         # we need the size of these buffers to be exactly the
         # number of particles sent/received
@@ -160,8 +156,6 @@ class Cell(Chare):
                       f" my neighbors are {self.nbr}, particle idx is {p[PARTICLE_ID]}, total particles: {len(self.particles)}, particle is {p}"
                       )
                 sys.exit()
-        comp_end = wtime()
-        comm_start = wtime()
 
         num_particles = len(my_buf) // PARTICLE_FIELDS
         self.particles = np.frombuffer(my_buf, dtype=np.float64)
@@ -174,15 +168,7 @@ class Cell(Chare):
             p_recv = np.frombuffer(ch.recv(), dtype=np.float64)
             self.particles = attach_received_particles(self.particles, p_recv)
 
-        comm_end = wtime()
-        iter_end = comm_end
         end_particles = len(self.particles)
-
-        self.timers[iter][ITER_TIME] = iter_end - iter_start
-        self.timers[iter][COMP_TIME] = comp_end - comp_start
-        self.timers[iter][COMM_TIME] = comm_end - comm_start
-        self.timers[iter][START_PARTICLES] = start_particles
-        self.timers[iter][END_PARTICLES] = end_particles
 
         self.num_particles = len(self.particles)
         if rank == 0 and verbose:
@@ -194,7 +180,6 @@ class Cell(Chare):
             self.AtSync()
             return
 
-        self.timers[self.iter-1][ELAPSED_TIME] = wtime() - self.sim_start
         if self.iter < iterations + 1:
             self.run()
         else:
@@ -213,16 +198,9 @@ class Cell(Chare):
                         [n_incorrect, id_checksum],
                         Reducer.sum
                         )
-            if output:
-                self.reduce(self.thisProxy[0].aggregate,
-				self.timers,
-				Reducer.gather
-			   )
-            if output is None or self.rank != 0:
-                self.reduce(self.done_future)
+            self.reduce(self.done_future)
 
     def resumeFromSync(self):
-        self.timers[self.iter-1][ELAPSED_TIME] = wtime() - self.sim_start
         self.thisProxy[self.thisIndex].run()
 
     def finish_initializing(self, particle_counts):
@@ -248,16 +226,6 @@ class Cell(Chare):
                 print(f"Particle checksum incorrect. {num_particles_checksum} {id_checksum}")
             else:
                 print("Solution validates.")
-
-    def aggregate(self, timers):
-        # write timers to file (if provided)
-        if output:
-            if add_datetime:
-                dt_str = get_datetime_str()
-            else:
-                dt_str = None
-        write_output(output, timers, prefix=dt_str)
-        self.reduce(self.done_future)
 
 def main(args):
     sim_params = parse_args(args)
