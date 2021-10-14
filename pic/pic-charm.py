@@ -181,7 +181,8 @@ class Cell(Chare):
             return
 
         if self.iter < iterations + 1:
-            self.run()
+            # self.run()
+            self.thisProxy[self.thisIndex].run()
         else:
             self.allreduce().get()
             if self.rank == 0:
