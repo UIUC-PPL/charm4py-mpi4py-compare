@@ -4,6 +4,7 @@ from charm4py import *
 import numpy
 from enum import Enum
 import time
+from numba import cuda
 import gpu_kernels as kernels
 from array import array
 
@@ -33,9 +34,9 @@ class Cell(Chare):
 
         self.width = m//y
         self.height = n//x
-
-        self.T = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
-        self.newT = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
+        t_template = numpy.zeros(my_blocksize + ghost_size, dtype=numpy.float64)
+        self.T = cuda.device_array_like(t_template)
+        self.newT = cuda.device_array_like(t_template)
 
         width, height = self.width, self.height
 
@@ -47,7 +48,7 @@ class Cell(Chare):
         self.top_buf_out = cuda.to_device(top_buf_out_h)
         self.top_buf_in = cuda.to_device(top_buf_in_h)
         self.bot_buf_out = cuda.to_device(bot_buf_out_h)
-        self.pot_buf_in = cuda.to_device(pot_buf_in_h)
+        self.bot_buf_in = cuda.to_device(bot_buf_in_h)
 
         right_buf_out_h = numpy.zeros(height)
         right_buf_in_h = numpy.zeros(height)
@@ -77,14 +78,14 @@ class Cell(Chare):
             top_nbr = Channel(self, top_proxy)
             top_nbr.dir = Directions.TOP
 
-            address = get_address(self.top_buf_in)
-            address = get_address(self.top_buf_out)
-            size = len(self.top_buf_in)
-            top_nbr.dev_addr_out = array.array('L', [address_out])
-            top_nbr.dev_size_out = array.array('i', [size])
+            address_in = get_address(self.top_buf_in)
+            address_out = get_address(self.top_buf_out)
+            size = self.top_buf_in.nbytes
+            top_nbr.dev_addr_out = array('L', [address_out])
+            top_nbr.dev_size_out = array('i', [size])
 
-            top_nbr.dev_addr_in = array.array('L', [address_in])
-            top_nbr.dev_size_in = array.array('i', [size])
+            top_nbr.dev_addr_in = array('L', [address_in])
+            top_nbr.dev_size_in = array('i', [size])
 
             self.TOP = top_nbr
             neighbors.append(top_nbr)
@@ -95,14 +96,14 @@ class Cell(Chare):
             bot_nbr.dir = Directions.BOTTOM
             address_in = get_address(self.bot_buf_in)
             address_out = get_address(self.bot_buf_out)
-            size = len(self.bot_buf_in)
-            bot_nbr.dev_addr_out = array.array('L', [address_out])
-            bot_nbr.dev_size_out = array.array('i', [size])
+            size = self.bot_buf_in.nbytes
+            bot_nbr.dev_addr_out = array('L', [address_out])
+            bot_nbr.dev_size_out = array('i', [size])
 
-            bot_nbr.dev_addr_in = array.array('L', [address_in])
-            bot_nbr.dev_size_in = array.array('i', [size])
+            bot_nbr.dev_addr_in = array('L', [address_in])
+            bot_nbr.dev_size_in = array('i', [size])
 
-            self.BOTTOM = bottom_nbr
+            self.BOTTOM = bot_nbr
             neighbors.append(bot_nbr)
 
         if self.X > 0:
@@ -112,12 +113,12 @@ class Cell(Chare):
 
             address_in = get_address(self.left_buf_in)
             address_out = get_address(self.left_buf_out)
-            size = len(self.left_buf_in)
-            left_nbr.dev_addr_out = array.array('L', [address_out])
-            left_nbr.dev_size_out = array.array('i', [size])
+            size = self.left_buf_in.nbytes
+            left_nbr.dev_addr_out = array('L', [address_out])
+            left_nbr.dev_size_out = array('i', [size])
 
-            left_nbr.dev_addr_in = array.array('L', [address_in])
-            left_nbr.dev_size_in = array.array('i', [size])
+            left_nbr.dev_addr_in = array('L', [address_in])
+            left_nbr.dev_size_in = array('i', [size])
 
             self.LEFT = left_nbr
             neighbors.append(left_nbr)
@@ -129,13 +130,13 @@ class Cell(Chare):
 
             address_in = get_address(self.right_buf_in)
             address_out = get_address(self.right_buf_out)
-            size = len(self.right_buf_in)
+            size = self.right_buf_in.nbytes
 
-            right_nbr.dev_addr_out = array.array('L', [address_out])
-            right_nbr.dev_size_out = array.array('i', [size])
+            right_nbr.dev_addr_out = array('L', [address_out])
+            right_nbr.dev_size_out = array('i', [size])
 
-            right_nbr.dev_addr_in = array.array('L', [address_in])
-            right_nbr.dev_size_in = array.array('i', [size])
+            right_nbr.dev_addr_in = array('L', [address_in])
+            right_nbr.dev_size_in = array('i', [size])
 
             self.RIGHT = right_nbr
             neighbors.append(right_nbr)
@@ -164,7 +165,7 @@ class Cell(Chare):
                                )
 
             if self.X > 0:
-                kernels.pack_left(self.T, left_buf_out)
+                kernels.pack_left(self.T, self.left_buf_out)
                 left_nbr.send(src_ptrs=self.LEFT.dev_addr_out,
                               src_sizes=self.LEFT.dev_size_out
                               )
@@ -175,6 +176,7 @@ class Cell(Chare):
             comp_start = comm_end
 
             # Apply the stencil operator
+            #for _ in range(10):
             kernels.compute(self.newT, self.T)
             self.newT, self.T = self.T, self.newT
             kernels.enforce_BC(self.T)
