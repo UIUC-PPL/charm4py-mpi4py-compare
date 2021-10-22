@@ -4,7 +4,9 @@ from charm4py import *
 import numpy
 from enum import Enum
 import time
-import kernels
+from numba import cuda
+import gpu_kernels as kernels
+from array import array
 
 COMM_TIME, COMP_TIME, ITER_TIME = range(3)
 
@@ -32,9 +34,32 @@ class Cell(Chare):
 
         self.width = m//y
         self.height = n//x
+        t_template = numpy.zeros(my_blocksize + ghost_size, dtype=numpy.float64)
+        self.T = cuda.device_array_like(t_template)
+        self.newT = cuda.device_array_like(t_template)
 
-        self.T = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
-        self.newT = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
+        width, height = self.width, self.height
+
+        top_buf_out_h = numpy.zeros(width)
+        top_buf_in_h = numpy.zeros(width)
+        bot_buf_out_h = numpy.zeros(width)
+        bot_buf_in_h = numpy.zeros(width)
+
+        self.top_buf_out = cuda.to_device(top_buf_out_h)
+        self.top_buf_in = cuda.to_device(top_buf_in_h)
+        self.bot_buf_out = cuda.to_device(bot_buf_out_h)
+        self.bot_buf_in = cuda.to_device(bot_buf_in_h)
+
+        right_buf_out_h = numpy.zeros(height)
+        right_buf_in_h = numpy.zeros(height)
+        left_buf_out_h = numpy.zeros(height)
+        left_buf_in_h = numpy.zeros(height)
+
+        self.right_buf_out = cuda.to_device(right_buf_out_h)
+        self.right_buf_in = cuda.to_device(right_buf_in_h)
+        self.left_buf_out = cuda.to_device(left_buf_out_h)
+        self.left_buf_in = cuda.to_device(left_buf_in_h)
+
         kernels.enforce_BC(self.T)
 
     @coro
@@ -45,37 +70,76 @@ class Cell(Chare):
         # unpack ghosts.
         # Computation is just time spent in the kernel and enforcing BC
         timing_info = numpy.zeros((warmup + iterations, 3), dtype=numpy.float64)
+        empty = lambda x: [0] * x
+        get_address = lambda x: x.__cuda_array_interface__['data'][0]
 
         if self.Y > 0:
             top_proxy = self.thisProxy[(self.X, self.Y-1)]
             top_nbr = Channel(self, top_proxy)
             top_nbr.dir = Directions.TOP
+
+            address_in = get_address(self.top_buf_in)
+            address_out = get_address(self.top_buf_out)
+            size = self.top_buf_in.nbytes
+            top_nbr.dev_addr_out = array('L', [address_out])
+            top_nbr.dev_size_out = array('i', [size])
+
+            top_nbr.dev_addr_in = array('L', [address_in])
+            top_nbr.dev_size_in = array('i', [size])
+
+            self.TOP = top_nbr
             neighbors.append(top_nbr)
 
         if self.Y < y-1:
             bot_proxy = self.thisProxy[(self.X, self.Y+1)]
             bot_nbr = Channel(self, bot_proxy)
             bot_nbr.dir = Directions.BOTTOM
+            address_in = get_address(self.bot_buf_in)
+            address_out = get_address(self.bot_buf_out)
+            size = self.bot_buf_in.nbytes
+            bot_nbr.dev_addr_out = array('L', [address_out])
+            bot_nbr.dev_size_out = array('i', [size])
+
+            bot_nbr.dev_addr_in = array('L', [address_in])
+            bot_nbr.dev_size_in = array('i', [size])
+
+            self.BOTTOM = bot_nbr
             neighbors.append(bot_nbr)
 
         if self.X > 0:
             left_proxy = self.thisProxy[(self.X-1, self.Y)]
             left_nbr = Channel(self, left_proxy)
             left_nbr.dir = Directions.LEFT
+
+            address_in = get_address(self.left_buf_in)
+            address_out = get_address(self.left_buf_out)
+            size = self.left_buf_in.nbytes
+            left_nbr.dev_addr_out = array('L', [address_out])
+            left_nbr.dev_size_out = array('i', [size])
+
+            left_nbr.dev_addr_in = array('L', [address_in])
+            left_nbr.dev_size_in = array('i', [size])
+
+            self.LEFT = left_nbr
             neighbors.append(left_nbr)
 
         if self.X < x-1:
             right_proxy = self.thisProxy[(self.X+1, self.Y)]
             right_nbr = Channel(self, right_proxy)
             right_nbr.dir = Directions.RIGHT
+
+            address_in = get_address(self.right_buf_in)
+            address_out = get_address(self.right_buf_out)
+            size = self.right_buf_in.nbytes
+
+            right_nbr.dev_addr_out = array('L', [address_out])
+            right_nbr.dev_size_out = array('i', [size])
+
+            right_nbr.dev_addr_in = array('L', [address_in])
+            right_nbr.dev_size_in = array('i', [size])
+
+            self.RIGHT = right_nbr
             neighbors.append(right_nbr)
-
-        if np > 1:
-            top_buf_out = numpy.zeros(self.width)
-            bot_buf_out = numpy.zeros(self.width)
-
-            right_buf_out = numpy.zeros(self.height)
-            left_buf_out = numpy.zeros(self.height)
 
         for i in range(warmup + iterations):
             if i == warmup:
@@ -84,39 +148,35 @@ class Cell(Chare):
             iter_start = time.perf_counter_ns()
             comm_start = iter_start
             if self.Y > 0:
-                kernels.pack_top(self.T, top_buf_out)
-                top_nbr.send(top_buf_out)
-
+                kernels.pack_top(self.T, self.top_buf_out)
+                top_nbr.send(src_ptrs=self.TOP.dev_addr_out,
+                             src_sizes=self.TOP.dev_size_out
+                             )
             if self.Y < y-1:
-                kernels.pack_bottom(self.T, bot_buf_out)
-                bot_nbr.send(bot_buf_out)
+                kernels.pack_bottom(self.T, self.bot_buf_out)
+                bot_nbr.send(src_ptrs=self.BOTTOM.dev_addr_out,
+                             src_sizes=self.BOTTOM.dev_size_out
+                             )
 
             if self.X < x-1:
-                kernels.pack_right(self.T, right_buf_out)
-                right_nbr.send(right_buf_out)
+                kernels.pack_right(self.T, self.right_buf_out)
+                right_nbr.send(src_ptrs=self.RIGHT.dev_addr_out,
+                               src_sizes=self.RIGHT.dev_size_out
+                               )
 
             if self.X > 0:
-                kernels.pack_left(self.T, left_buf_out)
-                left_nbr.send(left_buf_out)
+                kernels.pack_left(self.T, self.left_buf_out)
+                left_nbr.send(src_ptrs=self.LEFT.dev_addr_out,
+                              src_sizes=self.LEFT.dev_size_out
+                              )
 
-            for ready_ch in charm.iwait(neighbors):
-                input_data = ready_ch.recv()
-                if ready_ch.dir == Directions.TOP:
-                    kernels.unpack_top(self.T, input_data)
-
-                elif ready_ch.dir == Directions.BOTTOM:
-                    kernels.unpack_bottom(self.T, input_data)
-
-                elif ready_ch.dir == Directions.LEFT:
-                    kernels.unpack_left(self.T, input_data)
-
-                elif ready_ch.dir == Directions.RIGHT:
-                    kernels.unpack_right(self.T, input_data)
+            charm.iwait_map(self.receive_ghost, neighbors)
 
             comm_end = time.perf_counter_ns()
             comp_start = comm_end
 
             # Apply the stencil operator
+            #for _ in range(10):
             kernels.compute(self.newT, self.T)
             self.newT, self.T = self.T, self.newT
             kernels.enforce_BC(self.T)
@@ -140,6 +200,23 @@ class Cell(Chare):
 
         if self.thisIndex == (0, 0):
             print(f"Elapsed: {self.local_time}")
+
+    def receive_ghost(self, channel):
+        channel.recv(post_addresses=channel.dev_addr_in,
+                     post_sizes=channel.dev_size_in
+                     )
+
+        if channel.dir == Directions.TOP:
+            kernels.unpack_top(self.T, self.top_buf_in)
+
+        elif channel.dir == Directions.BOTTOM:
+            kernels.unpack_bottom(self.T, self.bot_buf_in)
+
+        elif channel.dir == Directions.LEFT:
+            kernels.unpack_left(self.T, self.left_buf_in)
+
+        elif channel.dir == Directions.RIGHT:
+            kernels.unpack_right(self.T, self.right_buf_in)
 
 
     def gather_timing(self, gathered):

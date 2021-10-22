@@ -12,27 +12,27 @@ def set_block_params(width, height):
 
 @njit
 def index(x, y):
-    return x*BLOCK_WIDTH + y
+    return x*(2+BLOCK_WIDTH) + y
 
 @njit
 def pack_left(temperature, ghost):
         for x in range(BLOCK_HEIGHT):
-            ghost[x] = temperature[index(x+1, 0)]
+            ghost[x] = temperature[index(x+1, 1)]
 
 @njit
 def pack_right(temperature, ghost):
     for x in range(BLOCK_HEIGHT):
-        ghost[x] = temperature[index(x+1,BLOCK_WIDTH-1)]
+        ghost[x] = temperature[index(x+1, BLOCK_WIDTH)]
 
 @njit
 def pack_top(temperature, ghost):
     for y in range(BLOCK_WIDTH):
-        ghost[y] = temperature[index(0, y+1)]
+        ghost[y] = temperature[index(1, y+1)]
 
 @njit
 def pack_bottom(temperature, ghost):
     for y in range(BLOCK_WIDTH):
-        ghost[y] = temperature[index(BLOCK_HEIGHT-1, y+1)]
+        ghost[y] = temperature[index(BLOCK_HEIGHT, y+1)]
 
 @njit
 def unpack_left(temperature, ghost):
@@ -42,17 +42,17 @@ def unpack_left(temperature, ghost):
 @njit
 def unpack_right(temperature, ghost):
     for x in range(BLOCK_HEIGHT):
-        temperature[index(x+1,BLOCK_WIDTH-1)] = ghost[x]
+        temperature[index(x+1, BLOCK_WIDTH+1)] = ghost[x]
 
 @njit
 def unpack_top(temperature, ghost):
     for y in range(BLOCK_WIDTH):
-        temperature[index(0, y+1)] = ghost[y]
+          temperature[index(0, y+1)] = ghost[y]
 
 @njit
 def unpack_bottom(temperature, ghost):
     for y in range(BLOCK_WIDTH):
-        temperature[index(BLOCK_HEIGHT-1,y+1)] = ghost[y]
+        temperature[index(BLOCK_HEIGHT+1, y+1)] = ghost[y]
 
 @njit
 def compute(new_temperature, temperature):

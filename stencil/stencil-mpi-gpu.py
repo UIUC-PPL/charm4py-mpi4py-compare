@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
+import mpi4py.rc; mpi4py.rc.threads = False
 import sys
 from mpi4py import MPI
 import numpy
-import kernels
 import time
+from numba import cuda
 
 COMM_TIME, COMP_TIME, ITER_TIME = range(3)
 
@@ -39,6 +40,9 @@ def main():
     comm = MPI.COMM_WORLD
     me = comm.Get_rank() #My ID
     np = comm.Get_size() #Number of processor, NOT numpy
+    ngpus = len(cuda.gpus)
+    cuda.select_device(me%ngpus)
+    import gpu_kernels as kernels
     x, y = factor(np)
     comm = comm.Create_cart([x,y])
     coords = comm.Get_coords(me)
@@ -96,21 +100,31 @@ def main():
     width = m//y
     height = n//x
 
-    T = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
-    newT = numpy.ones(my_blocksize + ghost_size, dtype=numpy.float64)
+    t_template = numpy.zeros(my_blocksize + ghost_size, dtype=numpy.float64)
+    T = cuda.device_array_like(t_template)
+    newT = cuda.device_array_like(t_template)
 
     kernels.enforce_BC(T)
 
-    top_buf_out = numpy.zeros(width)
-    top_buf_in = numpy.zeros(width)
-    bot_buf_out = numpy.zeros(width)
-    bot_buf_in = numpy.zeros(width)
+    top_buf_out_h = numpy.zeros(width)
+    top_buf_in_h = numpy.zeros(width)
+    bot_buf_out_h = numpy.zeros(width)
+    bot_buf_in_h = numpy.zeros(width)
 
-    right_buf_out = numpy.zeros(height)
-    right_buf_in = numpy.zeros(height)
-    left_buf_out = numpy.zeros(height)
-    left_buf_in = numpy.zeros(height)
+    top_buf_out = cuda.to_device(top_buf_out_h)
+    top_buf_in = cuda.to_device(top_buf_in_h)
+    bot_buf_out = cuda.to_device(bot_buf_out_h)
+    bot_buf_in = cuda.to_device(bot_buf_in_h)
 
+    right_buf_out_h = numpy.zeros(height)
+    right_buf_in_h = numpy.zeros(height)
+    left_buf_out_h = numpy.zeros(height)
+    left_buf_in_h = numpy.zeros(height)
+
+    right_buf_out = cuda.to_device(right_buf_out_h)
+    right_buf_in = cuda.to_device(right_buf_in_h)
+    left_buf_out = cuda.to_device(left_buf_out_h)
+    left_buf_in = cuda.to_device(left_buf_in_h)
 
     if Y < y-1:
         top_nbr   = comm.Get_cart_rank([X,Y+1])
